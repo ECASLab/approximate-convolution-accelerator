@@ -61,13 +61,13 @@ void print_matrix(const float res[mRows + (K-1)][nCols + (K-1)]) {
  */
 
 int main() {
-  const float a[3][3] = {{2.3, 4.5, 1.8}, {3.3, 0.7, 0.0}, {5.0, 6.8, 9.9}};
+  const float a[mRows][nCols] = {{2.3, 4.5, 1.8}, {3.3, 0.7, 0.0}, {5.0, 6.8, 9.9}};
 
-  float b[5][5] = {0};
+  float b[mRows + (K-1)][nCols + (K-1)] = {0};
 
-  const float c[3][3] = {{2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}};
+  const float c[K][K] = {{2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}};
 
-  float d[5][5] = {0};
+  float d[mRows + (K-1)][nCols + (K-1)] = {0};
   operations_top_sw(0, a, b, d);
   operations_top_sw(1, c, b, d);
   print_matrix(d);

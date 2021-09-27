@@ -22,16 +22,16 @@ template <typename T, int M, int N, int k>
 void conv(const T kernel[k][k], const T input_image[M + (k - 1)][N + (k - 1)],
           T output_image[M + (k - 1)][N + (k - 1)]) {
   int start = k / 2;
-  T suma = 0;
+  T sum = 0;
   for (int i = start; i < M + start; i++) {
     for (int j = start; j < N + start; j++) {
       for (int e = 0; e < k; e++) {
         for (int r = 0; r < k; r++) {
-          suma = kernel[e][r] * input_image[i - start + e][j - start + r] + suma;
+          sum = kernel[e][r] * input_image[i - start + e][j - start + r] + sum;
         }
       }
-      output_image[i][j] = suma;
-      suma = 0;
+      output_image[i][j] = sum;
+      sum = 0;
     }
   }
 }
