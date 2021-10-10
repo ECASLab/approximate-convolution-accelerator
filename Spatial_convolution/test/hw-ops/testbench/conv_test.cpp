@@ -6,8 +6,10 @@
 
 #include <iostream>
 
+#include "testbench.hpp"
+
 #include "../../../includes/linear.hpp"
-#include "../tops/matadd_top_accel.hpp"
+#include "../tops/spatialconv_top_accel.hpp"
 
 /**
  * @brief Matrix use as test for the functions
@@ -29,5 +31,5 @@ int main(int argc, char **argv) {
   float d[mRows + (K - 1)][nCols + (K - 1)] = {0};
   ama::sw::padding<float, mRows, nCols, K>(a, b);
   ama::sw::conv<float, mRows, nCols, K>(c, b, d);
-  ama::utils::print_matrix(d);
+  ama::utils::print_matrix<float, mRows, nCols, K>(d);
 }
