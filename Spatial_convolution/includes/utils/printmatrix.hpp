@@ -15,6 +15,10 @@ template <typename T, int M, int N, int k>
 
 /**
  * @brief Prints a matrix
+ * @tparam T datatype
+ * @tparam M the number of rows
+ * @tparam N the number of columns
+ * @tparam K the size of the kernel
  * @param res a matrix that will be printed in the cmd
  */
 

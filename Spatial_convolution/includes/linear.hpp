@@ -15,4 +15,4 @@
 #include "sw-ops/Padding.hpp"
 
 /* Utils */
-#include "utils/PrintMatrx.hpp"
+#include "utils/printmatrix.hpp"

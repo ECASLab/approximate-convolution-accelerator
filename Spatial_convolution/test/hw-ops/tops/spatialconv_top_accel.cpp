@@ -11,5 +11,5 @@
 void spatialconv_top_accel(float a[mRows][nCols],
                            float b[mRows + (K - 1)][nCols + (K - 1)],
                            float c[mRows + (K - 1)][nCols + (K - 1)]) {
-  ama::sw::conv<float, mRows, nCols, K>(a, b, c);
+  ama::hw::conv<float, mRows, nCols, K>(a, b, c);
 }

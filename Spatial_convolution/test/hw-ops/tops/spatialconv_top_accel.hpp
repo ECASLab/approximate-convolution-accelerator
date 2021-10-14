@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "testbench.hpp"
+#include "../testbench/testbench.hpp"
 
 /**
  * @brief Matrix spatial convolution and padding

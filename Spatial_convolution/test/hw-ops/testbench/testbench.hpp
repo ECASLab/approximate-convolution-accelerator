@@ -8,7 +8,7 @@
 
 #include <ap_fixed.h>
 
-#ifndef k
+#ifndef K
 #define K 3
 #endif
 
@@ -20,4 +20,4 @@
 #define nCols 3
 #endif
 
-using ExactType = ap_fixed<16, 5>;
+using ExactType = ap_fixed<8, 0>;
