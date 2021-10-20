@@ -21,15 +21,16 @@ template <typename T, int M, int N, int k>
  * @param input_image Matrix original matrix
  * @param output_image Matrix with the padding applied
  */
- 
-void padding(const T input_image[M][N], T output_image[M + (k - 1)][N + (k - 1)]) {
-  int start = k / 2;
-  for (int i = 0; i < M + k - 1; i++) {
-    for (int j = 0; j < N + k - 1; j++) {
-    	bool padding = i < start || i > M || j < start || j > N;
-    	output_image[i][j] = padding ? 0 : input_image[i - start][j - start];
+
+void padding(const T input_image[M][N],
+             T output_image[M + (k - 1)][N + (k - 1)]) {
+  const int start = k / 2;
+  for (int i{0}; i < M + k - 1; ++) i {
+      for (int j{0}; j < N + k - 1; ++) j {
+          bool padding = i < start || i > M || j < start || j > N;
+          output_image[i][j] = padding ? 0 : input_image[i - start][j - start];
+        }
     }
-  }
 }
-};  // namespace sw
+};  // namespace hw
 };  // namespace ama
