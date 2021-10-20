@@ -7,8 +7,10 @@
 #pragma once
 
 /* Hardware ops */
+#ifndef SW_ONLY
 #include "hw-ops/Convolution.hpp"
 #include "hw-ops/Padding.hpp"
+#endif
 
 /* Software ops */
 #include "sw-ops/Convolution.hpp"

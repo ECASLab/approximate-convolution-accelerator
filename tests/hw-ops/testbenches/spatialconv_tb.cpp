@@ -8,8 +8,11 @@
 
 #include "testbench.hpp"
 
-#include "../../../includes/linear.hpp"
-#include "../tops/spatialconv_top_accel.hpp"
+/* Files from include */
+#include "convolution.hpp"
+
+/* Files from tops */
+#include "spatialconv.hpp"
 
 /**
  * @brief Matrix use as test for the functions
@@ -21,15 +24,15 @@
  */
 
 int main() {
-  const float a[mRows][nCols] = {
+  float a[mRows][nCols] = {
       {2.3, 4.5, 1.8}, {3.3, 0.7, 0.0}, {5.0, 6.8, 9.9}};
 
   float b[mRows + (K - 1)][nCols + (K - 1)] = {0};
 
-  const float c[K][K] = {{0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
+  float c[K][K] = {{0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
 
   float d[mRows + (K - 1)][nCols + (K - 1)] = {0};
   ama::hw::padding<float, mRows, nCols, K>(a, b);
-  ama::hw::conv<float, mRows, nCols, K>(c, b, d);
-  ama::utils::print_matrix<float, mRows, nCols, K>(d);
+  spatialconv_top_accel(c, b, d);
+  ama::utils::print_matrix<float, mRows + (K - 1), nCols + (K - 1)>(d);
 }

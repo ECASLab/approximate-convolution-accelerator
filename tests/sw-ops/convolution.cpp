@@ -6,8 +6,7 @@
 
 #include <iostream>
 
-#include "../includes/sw-ops/Convolution.hpp"
-#include "../includes/sw-ops/Padding.hpp"
+#include "convolution.hpp"
 
 #define K 3
 #define mRows 3

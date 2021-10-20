@@ -22,8 +22,8 @@ template <typename T, int M, int N>
  */
 
 void print_matrix(const T res[M][N]) {
-  for (int i{0}; i < M; ++i {
-    for (int j{0}; j < N; ++j {
+  for (int i{0}; i < M; ++i) {
+    for (int j{0}; j < N; ++j) {
       std::cout << res[i][j] << ' ';
     }
     std::cout << std::endl;

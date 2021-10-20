@@ -35,5 +35,5 @@ void conv(const T kernel[k][k], const T input_image[M + (k - 1)][N + (k - 1)],
     }
   }
 }
-};  // namespace sw
-};  // namespace ama
+}  // namespace sw
+}  // namespace ama
