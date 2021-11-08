@@ -28,6 +28,6 @@ Targets:
 CoreOps modifiers:
 - Q_KS: kernel size. i.e. Q_KS=3 for 3x3 kernels. Def: $(Q_KS)
 - Q_BW: length of the integer representation (in bits). Def: $(Q_BW)
-
+- TB_ARGS: arguments to pass to the testbench. Def: <empty>
 ------------------------------------------
 endef
