@@ -10,7 +10,7 @@ open_solution "solution"
 set_part {xc7z020clg484-1}
 create_clock -period 10 -name default
 source "$::env(DIRECTIVE_FILE)"
-csim_design -clean
+csim_design -clean -argv "$::env(TB_ARGV)"
 csynth_design
-cosim_design
+cosim_design -argv "$::env(TB_ARGV)"
 exit
