@@ -23,13 +23,13 @@ void padding(const T input_image[M][N],
   const int start = k / 2;
   for (int i{0}; i < M + k - 1; ++i) {
       for (int j{0}; j < N + k - 1; ++j) {
-          if (i < start || j < start) {
+          if (i < start && j < start) {
             output_image[i][j] = input_image[0][0];
-          } else if (i < start || j > (N - 1 + start)){
+          } else if (i < start && j > (N - 1 + start)){
             output_image[i][j] = input_image[0][N - 1];
-          } else if (i > (M - 1 + start) || j < start){
+          } else if (i > (M - 1 + start) && j < start){
             output_image[i][j] = input_image[M - 1][0];
-          } else if (i > (M - 1 + start) || j > (N - 1 + start)){
+          } else if (i > (M - 1 + start) && j > (N - 1 + start)){
             output_image[i][j] = input_image[M - 1][N - 1];
           } else if (i < start){
             output_image[i][j] = input_image[0][j - start];
