@@ -42,7 +42,7 @@ cd tests/hw-ops/
 TEST=spatialconv make test
 
 # For synthesis + simulation where the testbench has arguments
-TB_ARGS="`pwd`/misc/lenna.png `pwd`/misc/output.png" TEST=open make test
+TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" TEST=open make test
 
 # Run everything - with a Kernel Size of 3x3
 export Q_KS=3
@@ -110,7 +110,7 @@ Install the libraries:
 
 ```bash
 wget http://se.archive.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb
-sudo apt install libpng12-0_1.2.54-1ubuntu1_amd64.deb
+sudo apt install ./libpng12-0_1.2.54-1ubuntu1_amd64.deb
 sudo apt-get install libjpeg62
 ```
 

@@ -85,7 +85,7 @@ int main() {
   float d[mRows + (K - 1)][nCols + (K - 1)] = {0}; 
 operations_top_sw(0, a, b, d, c);
 operations_top_sw(1, a, b, d, c);
-print_matrix(d5);
+print_matrix(d);
 
   return 0;
 }
