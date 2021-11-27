@@ -6,7 +6,7 @@ open_src = ['open.cpp']
 # For new sources:
 # replicate _src
 
-executable('convolution', convolution_src, include_directories : include_dir)
+executable('convolution', convolution_src, include_directories : include_dir, dependencies: [opencv_dep])
 executable('open', open_src, include_directories : include_dir, dependencies: [opencv_dep])
 # For new sources:
 # replicate executable

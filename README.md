@@ -113,9 +113,9 @@ wget http://se.archive.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54
 sudo apt install ./libpng12-0_1.2.54-1ubuntu1_amd64.deb
 sudo apt-get install libjpeg62
 ```
-
-
-
+```bash
+./open ~/Downloads/Lenna.png
+```
 Author:
 
 * Alejandro Rodriguez Figueroa <alejandrorf@estudiantec.cr>

@@ -14,8 +14,14 @@ int main(int argc, char** argv) {
     std::cerr << "Cannot open the file. No enough args" << std::endl;
     return -1;
   }
+
   cv::Mat img = cv::imread(argv[1]);
+  int m = img.rows;
+  int n = img.cols;
+  std::cout << m << std::endl;
+  std::cout << n << std::endl;
   cv::imshow("Img", img);
   cv::waitKey(0);
+
   return 0;
 }
