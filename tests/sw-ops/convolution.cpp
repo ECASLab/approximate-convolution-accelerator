@@ -4,6 +4,8 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#include <iostream>
+#include <opencv2/opencv.hpp>
 #include "convolution.hpp"
 #include <iostream>
 #include <opencv2/opencv.hpp>
@@ -23,9 +25,9 @@
  */
 
 void operations_top_sw(int selection, const float a[mRows][nCols],
-                       float b[mRows + (K - 1)][nCols + (K - 1)],
-                       float c[mRows + (K - 1)][nCols + (K - 1)],
-                       float d[K][K]) {
+                       float b[mRows + (K-1)][nCols + (K-1)], 
+                       float c[mRows + (K-1)][nCols + (K-1)], 
+                       float d[K][K]){
   switch (selection) {
     case 0:
       ama::sw::padding<float, mRows, nCols, K>(a, b);
@@ -73,6 +75,16 @@ int main(int argc, char** argv) {
   int M = img.rows;
   int N = img.cols;
   float a[mRows][nCols] = {0};
+
+    for (int i{0}; i < M; ++i) {
+    for (int j{0}; j < N; ++j) {
+      a[i][j] = img.at<uint8_t>(i, j);
+    }
+  }
+
+  //Pasar a funcion
+
+  //const float a[mRows][nCols] = {{2.3, 4.5, 1.8}, {3.3, 0.7, 0.0}, {5.0, 6.8, 9.9}};
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
