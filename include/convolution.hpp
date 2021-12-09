@@ -20,3 +20,6 @@
 
 /* Utils */
 #include "utils/printmatrix.hpp"
+#include "utils/Kernel3.hpp"
+#include "utils/Kernel5.hpp"
+#include "utils/Kernel7.hpp"
