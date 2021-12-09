@@ -12,6 +12,3 @@ executable('open', open_src, include_directories : include_dir, dependencies: [o
 executable('convFFT', convFFT_src, include_directories : include_dir, dependencies: [opencv_dep])
 # For new sources:
 # replicate executable
-
-
-
