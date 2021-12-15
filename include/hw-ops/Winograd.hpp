@@ -26,7 +26,8 @@ class Exact {
   /**
    * Execute the exact implementation
    * @param window input window to convolve with the kernel
-   * @param window input window to convolve with the kernel
+   * @param kernel kernel to convolve with
+   * @param output output window
    */
   void Execute(const T window[windowsize][windowsize],
                const T kernel[kernelsize][kernelsize],
