@@ -14,16 +14,20 @@
 namespace ama {
 namespace sw {
 
-typedef std::complex<float> Complex;
-typedef std::valarray<Complex> CArray;
+template<typename T>
+using Complex = std::complex<T>;
 
+template<typename T>
+using CArray = std::valarray<Complex<T>>;
 
-void ifft(CArray &x) {
+template<typename T>
+
+void ifft(CArray<T> &x) {
     // conjugate the complex numbers
     x = x.apply(std::conj);
  
     // forward fft
-    ama::sw::fft( x );
+    ama::sw::fft<T>( x );
  
     // conjugate the complex numbers again
     x = x.apply(std::conj);

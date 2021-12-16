@@ -13,26 +13,27 @@
 namespace ama {
 namespace sw {
 
-const double PI = 3.141592653589793238460;
+template<typename T>
+using Complex = std::complex<T>;
 
-typedef std::complex<float> Complex;
-typedef std::valarray<Complex> CArray;
+template<typename T>
+using CArray = std::valarray<Complex<T>>;
 
-
-void fft(CArray &x) {
+template<typename C = float>
+void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
-  double thetaT = 3.14159265358979323846264338328L / N;
-  Complex phiT = Complex(cos(thetaT), -sin(thetaT)), T;
+  C thetaT = 3.1415926535 / N;
+  Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
   while (k > 1) {
     n = k;
     k >>= 1;
     phiT = phiT * phiT;
-    T = 1.0L;
+    T = 1.0;
     for (unsigned int l = 0; l < k; l++) {
       for (unsigned int a = l; a < N; a += n) {
         unsigned int b = a + k;
-        Complex t = x[a] - x[b];
+        auto t = x[a] - x[b];
         x[a] += x[b];
         x[b] = t * T;
       }
@@ -50,7 +51,7 @@ void fft(CArray &x) {
     b = (((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8));
     b = ((b >> 16) | (b << 16)) >> (32 - m);
     if (b > a) {
-      Complex t = x[a];
+      auto t = x[a];
       x[a] = x[b];
       x[b] = t;
     }

@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
        a[i][j] = img.at<uint8_t>(i, j);
      }
    }
-  ama::sw::fft_2D<Complex, CArray, MRows, NCols>(a);
+  ama::sw::fft_2D<float, MRows, NCols>(a);
 
 
   // const Complex test[MRows];
