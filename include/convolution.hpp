@@ -17,6 +17,9 @@
 #include "sw-ops/Convolution.hpp"
 #include "sw-ops/Padding.hpp"
 #include "sw-ops/FFT.hpp"
+#include "sw-ops/FFT_2D.hpp"
+#include "sw-ops/IFFT.hpp"
+#include "sw-ops/IFFT_2D.hpp"
 
 /* Utils */
 #include "utils/printmatrix.hpp"

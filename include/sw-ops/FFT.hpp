@@ -1,3 +1,9 @@
+/*
+ * Copyright 2021
+ * Author: Alejandro Rodriguez Figueroa <alejandrorf@estudiantec.cr>
+ * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
+ */
+
 #include <complex>
 #include <iostream>
 #include <valarray>
@@ -11,6 +17,7 @@ const double PI = 3.141592653589793238460;
 
 typedef std::complex<float> Complex;
 typedef std::valarray<Complex> CArray;
+
 
 void fft(CArray &x) {
   // DFT
