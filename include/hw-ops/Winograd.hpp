@@ -125,7 +125,10 @@ template <typename T, int K>
 inline void Exact<T, K>::TransformInput(
     const T w[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
     T w_w[Exact<T, K>::windowsize][Exact<T, K>::windowsize]) {
-  /* TODO: Factorise operations */
+  /*
+   * TODO: Factorise operations. It may lead to overflow if not taken into
+   * account
+   */
   w_w[0][0] = w[0][0] - w[0][2] - w[2][0] + w[2][2];
   w_w[0][1] = w[0][1] + w[0][2] - w[2][1] - w[2][2];
   w_w[0][2] = -w[0][1] + w[0][2] + w[2][1] - w[2][2];
