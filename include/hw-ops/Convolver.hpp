@@ -5,10 +5,13 @@
 
 #pragma once
 
+#include "cores/arithmetic-exact.hpp"
+
 namespace ama {
 namespace hw {
 
-template <typename T, int K>
+template <typename T, int K, class ADD = arithmetic::exact::Add<T>,
+          class MULT = arithmetic::exact::Mult<T>>
 class Convolver {
  public:
   /*
