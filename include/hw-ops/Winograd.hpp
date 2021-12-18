@@ -114,10 +114,8 @@ inline void Exact<T, K>::Hadamard(
     T w_kw[Exact<T, K>::windowsize][Exact<T, K>::windowsize]) {
 winograd_exact_hadamard_i:
   for (int i{0}; i < windowsize; ++i) {
-#pragma HLS UNROLL
   winograd_exact_hadamard_j:
     for (int j{0}; j < windowsize; ++j) {
-#pragma HLS UNROLL
       w_kw[i][j] = w_k[i][j] * w_w[i][j];
     }
   }
