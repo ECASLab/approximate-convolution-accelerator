@@ -10,6 +10,7 @@
 #include "convolution.hpp"
 #include <opencv2/opencv.hpp>
 
+#define K 7
 #define MRows 512
 #define NCols 512
 
@@ -24,51 +25,38 @@ int main(int argc, char** argv) {
      return -1;
    }
    cv::Mat img = cv::imread(argv[1], 0);
-  //  const int MRows = img.rows;
-  //  const int NCols = img.cols;
+
    Complex a[MRows][NCols] = {0};
-   //CArray data(a, MRows);
-   //Complex out_a[MRows][NCols] = {0};
+
    for (int i{0}; i < MRows; ++i) {
      for (int j{0}; j < NCols; ++j) {
        a[i][j] = img.at<uint8_t>(i, j);
      }
    }
-  ama::sw::fft_2D<float, MRows, NCols>(a);
 
+  float c[K][K];
+  #if K == 5
+    ama::utils::add_kernel5<float, K>(c);
+  #elif K == 7
+    ama::utils::add_kernel7<float, K>(c);
+  #elif K == 3
+    ama::utils::add_kernel3<float, K>(c);
+  #else
+  #error "Cannot proceed with the given kernel"
+  #endif
 
-  // const Complex test[MRows];
-  // CArray data(test, MRows);
+  ama::sw::fft_conv_2D<float, MRows, NCols, K>(a, c);
 
-  // for (int i{0}; i < MRows; ++i) {
-  //   for (int j{0}; j < NCols; ++j) {
-  //     const Complex test[j] = a[i][j];
-  //   }
-  //   CArray data(test, MRows);
-  //   ama::sw::fft(data);
-  //   for (int k{0}; k < NCols; ++k) {
-  //   out_a[i][k] = data[k];
-  //   }
-  // }
+  cv::Mat a_img(MRows , NCols, CV_8U, a);
+  for (int i{0}; i < MRows; ++i) {
+    for (int j{0}; j < NCols; ++j) {
+      a_img.at<uint8_t>(i, j) = a[i][j].real();
+    }
+  }
 
+  cv::imshow("a_img", a_img);
+  cv::imshow("img", img);
+  cv::waitKey(0);
 
-
-
-
-//trabajo despues
-  // for (int i{0}; i < MRows; ++i) {
-  //   for (int j{0}; j < NCols; ++j) {
-  //     const Complex test[i] = a[j][i];
-  //     ama::sw::fft(data);
-  //   }
-  // }
-
-  // forward fft
-  // ama::sw::fft(data);
-
-  //  std::cout << "fft" << std::endl;
-  //   for (int i = 0; i < 8; ++i) {
-  //     std::cout << data[i] << std::endl;
-  //   }
   return 0;
 }

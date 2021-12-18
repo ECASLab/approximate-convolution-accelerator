@@ -20,6 +20,8 @@
 #include "sw-ops/FFT_2D.hpp"
 #include "sw-ops/IFFT.hpp"
 #include "sw-ops/IFFT_2D.hpp"
+#include "sw-ops/FFT_conv_2D.hpp"
+#include "sw-ops/PaddKernel_FFT.hpp"
 
 /* Utils */
 #include "utils/printmatrix.hpp"
