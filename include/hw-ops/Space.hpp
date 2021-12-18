@@ -14,6 +14,8 @@ namespace convolvers {
 
 using namespace ama::hw;
 
+using namespace ama::hw;
+
 /**
  * Spatial convolution class
  * It specialises the convolver into the exact convolution class
