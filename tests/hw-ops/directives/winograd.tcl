@@ -13,3 +13,12 @@ set_directive_array_partition -type complete -dim 0 "winograd_top_accel" output
 # Register Hadamard optimisation
 set_directive_unroll "Exact<T, K>::Hadamard/winograd_exact_hadamard_i"
 set_directive_unroll "Exact<T, K>::Hadamard/winograd_exact_hadamard_j"
+
+# Optimisation
+set_directive_inline -off "Exact<T, K>::Execute"
+
+# No Effect!
+#set_directive_inline "Exact<T, K>::TransformInput"
+#set_directive_inline "Exact<T, K>::TransformKernel"
+#set_directive_inline "Exact<T, K>::Hadamard"
+#set_directive_inline "Exact<T, K>::DetransformOutput"
