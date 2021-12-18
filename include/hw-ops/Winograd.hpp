@@ -13,61 +13,45 @@
 
 #pragma once
 
+#include "Convolver.hpp"
+
 namespace ama {
 namespace hw {
 namespace winograd {
 namespace core {
+
+using namespace ama::hw;
 
 /**
  * Exact Winograd convolution functor class
  * @tparam T datatype
  * @tparam K kernel size
  */
-template <typename T, int K> class Exact {
-public:
-  /*
-   * Define some useful variables for implementation purposes
-   * This may change according to the kernel. In the meantime
-   * it is assumed to be K = 3
-   * FIXME: extend to kernels of different sizes
-   */
-  static const int kernelsize = K;
-  static const int windowsize = K + 1;
-  static const int outputsize = K - 1;
-
+template <typename T, int K>
+class Exact : public Convolver<T, K> {
+ public:
   /**
    * Execute the exact implementation
    * @param window input window to convolve with the kernel
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  void Execute(const T window[windowsize][windowsize],
-               const T kernel[kernelsize][kernelsize],
-               T output[outputsize][outputsize]) {
-    T w_window[windowsize][windowsize];
-    T w_kernel[windowsize][windowsize];
-    T w_output[windowsize][windowsize];
+  virtual void Execute(
+      const T window[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      const T kernel[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+      T output[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize])
+      override;
 
-    /* Transform */
-    TransformInput(window, w_window);
-    TransformKernel(kernel, w_kernel);
-
-    /* Convolve */
-    Hadamard(w_kernel, w_window, w_output);
-
-    /* Transform back */
-    DetransformOutput(w_output, output);
-  }
-
-private:
+ private:
   /**
    * Performs the transformation of the Input into the Winograd Domain
    * The operation performed is BtZB
    * @param w input in space domain
    * @param w_w transformed input into Winograd domain
    */
-  void TransformInput(const T w[windowsize][windowsize],
-                      T w_w[windowsize][windowsize]);
+  void TransformInput(
+      const T w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      T w_w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]);
 
   /**
    * Performs the transformation of the kernel into the Winograd Domain
@@ -75,8 +59,9 @@ private:
    * @param k kernel in space domain
    * @param w_k transformed kernel into Winograd domain
    */
-  void TransformKernel(const T k[kernelsize][kernelsize],
-                       T w_k[windowsize][windowsize]);
+  void TransformKernel(
+      const T k[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+      T w_k[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]);
 
   /**
    * Performs the Hadamard product between two spectrums
@@ -84,9 +69,10 @@ private:
    * @param w_w input in Winograd domain
    * @param w_kw output in Winograd domain
    */
-  void Hadamard(const T w_k[windowsize][windowsize],
-                const T w_w[windowsize][windowsize],
-                T w_kw[windowsize][windowsize]);
+  void Hadamard(
+      const T w_k[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      const T w_w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      T w_kw[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]);
 
   /**
    * Performs the transformation of the output into the space Domain
@@ -94,14 +80,35 @@ private:
    * @param w_h output in Winograd domain
    * @param h transformed output into space domain
    */
-  void DetransformOutput(const T w_h[windowsize][windowsize],
-                         T h[outputsize][outputsize]);
+  void DetransformOutput(
+      const T w_h[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      T h[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize]);
 };
 
 template <typename T, int K>
+inline void Exact<T, K>::Execute(
+    const T window[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    const T kernel[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+    T output[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize]) {
+  T w_window[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize];
+  T w_kernel[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize];
+  T w_output[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize];
+
+  /* Transform */
+  TransformInput(window, w_window);
+  TransformKernel(kernel, w_kernel);
+
+  /* Convolve */
+  Hadamard(w_kernel, w_window, w_output);
+
+  /* Transform back */
+  DetransformOutput(w_output, output);
+}
+
+template <typename T, int K>
 inline void Exact<T, K>::DetransformOutput(
-    const T w_h[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
-    T h[Exact<T, K>::outputsize][Exact<T, K>::outputsize]) {
+    const T w_h[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    T h[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize]) {
   h[0][0] = w_h[0][0] + w_h[0][1] + w_h[0][2] + w_h[1][0] + w_h[1][1] +
             w_h[1][2] + w_h[2][0] + w_h[2][1] + w_h[2][2];
   h[0][1] = w_h[0][1] - w_h[0][2] - w_h[0][3] + w_h[1][1] - w_h[1][2] -
@@ -114,13 +121,13 @@ inline void Exact<T, K>::DetransformOutput(
 
 template <typename T, int K>
 inline void Exact<T, K>::Hadamard(
-    const T w_k[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
-    const T w_w[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
-    T w_kw[Exact<T, K>::windowsize][Exact<T, K>::windowsize]) {
+    const T w_k[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    const T w_w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    T w_kw[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]) {
 winograd_exact_hadamard_i:
-  for (int i{0}; i < windowsize; ++i) {
+  for (int i{0}; i < Convolver<T, K>::windowsize; ++i) {
   winograd_exact_hadamard_j:
-    for (int j{0}; j < windowsize; ++j) {
+    for (int j{0}; j < Convolver<T, K>::windowsize; ++j) {
       w_kw[i][j] = w_k[i][j] * w_w[i][j];
     }
   }
@@ -128,8 +135,8 @@ winograd_exact_hadamard_i:
 
 template <typename T, int K>
 inline void Exact<T, K>::TransformInput(
-    const T w[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
-    T w_w[Exact<T, K>::windowsize][Exact<T, K>::windowsize]) {
+    const T w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    T w_w[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]) {
   /*
    * TODO: Factorise operations. It may lead to overflow if not taken into
    * account
@@ -154,8 +161,8 @@ inline void Exact<T, K>::TransformInput(
 
 template <typename T, int K>
 inline void Exact<T, K>::TransformKernel(
-    const T k[Exact<T, K>::kernelsize][Exact<T, K>::kernelsize],
-    T w_k[Exact<T, K>::windowsize][Exact<T, K>::windowsize]) {
+    const T k[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+    T w_k[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize]) {
   /* TODO: Factorise operations */
   w_k[0][0] = k[0][0];
   w_k[0][1] = (k[0][0] + k[0][1] + k[0][2]) >> 1;

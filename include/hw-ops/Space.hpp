@@ -5,10 +5,14 @@
 
 #pragma once
 
+#include "Convolver.hpp"
+
 namespace ama {
 namespace hw {
 namespace space {
 namespace core {
+
+using namespace ama::hw;
 
 /**
  * Exact space convolution functor class
@@ -16,27 +20,19 @@ namespace core {
  * @tparam K kernel size
  */
 template <typename T, int K>
-class Exact {
+class Exact : public Convolver<T, K> {
  public:
-  /*
-   * Define some useful variables for implementation purposes
-   * This may change according to the kernel. In the meantime
-   * it is assumed to be K = 3
-   * FIXME: extend to kernels of different sizes
-   */
-  static const int kernelsize = K;
-  static const int windowsize = K + 1;
-  static const int outputsize = K - 1;
-
   /**
    * Execute the exact implementation
    * @param window input window to convolve with the kernel
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  void Execute(const T window[windowsize][windowsize],
-               const T kernel[kernelsize][kernelsize],
-               T output[outputsize][outputsize]);
+  virtual void Execute(
+      const T window[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+      const T kernel[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+      T output[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize])
+      override;
 };
 
 template <typename T>
@@ -46,18 +42,18 @@ T mult(const T lhs, const T rhs) {
 
 template <typename T, int K>
 inline void Exact<T, K>::Execute(
-    const T window[Exact<T, K>::windowsize][Exact<T, K>::windowsize],
-    const T kernel[Exact<T, K>::kernelsize][Exact<T, K>::kernelsize],
-    T output[Exact<T, K>::outputsize][Exact<T, K>::outputsize]) {
+    const T window[Convolver<T, K>::windowsize][Convolver<T, K>::windowsize],
+    const T kernel[Convolver<T, K>::kernelsize][Convolver<T, K>::kernelsize],
+    T output[Convolver<T, K>::outputsize][Convolver<T, K>::outputsize]) {
   T sum = 0;
 space_exact_execute_i:
-  for (int i{0}; i < outputsize; ++i) {
+  for (int i{0}; i < Convolver<T, K>::outputsize; ++i) {
   space_exact_execute_j:
-    for (int j{0}; j < outputsize; ++j) {
+    for (int j{0}; j < Convolver<T, K>::outputsize; ++j) {
     space_exact_execute_e:
-      for (int e{0}; e < kernelsize; ++e) {
+      for (int e{0}; e < Convolver<T, K>::kernelsize; ++e) {
       space_exact_execute_r:
-        for (int r{0}; r < kernelsize; ++r) {
+        for (int r{0}; r < Convolver<T, K>::kernelsize; ++r) {
           sum += mult(kernel[e][r], window[i + e][j + r]);
         }
       }
