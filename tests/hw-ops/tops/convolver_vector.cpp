@@ -3,8 +3,9 @@
  * Author: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
-#include "hw-ops/Winograd.hpp"
-#include "winograd.hpp"
+#include "convolver_vector.hpp"
+
+#include "hw-ops/Space.hpp"
 
 // This is the template loop. This is written in such way that it executes from
 // the greater index to 0
@@ -41,8 +42,8 @@ void do_unroll(DataType input[7][4], DataType kernel[Q_K][Q_K],
 template <int B>
 void do_all(DataType input[7][4], DataType kernel[Q_K][Q_K],
             DataType output[4][2]) {
-  do_unroll<B, ama::hw::winograd::core::Exact<DataType, Q_K>>(input, kernel,
-                                                              output);
+  do_unroll<B, ama::hw::space::core::Exact<DataType, Q_K>>(input, kernel,
+                                                           output);
 }
 
 /* The convolution happens in row-major but it is transferred by columns */
