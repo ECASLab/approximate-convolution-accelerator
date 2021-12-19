@@ -28,6 +28,7 @@ struct Looper {
       DataType input[NT * Wrapper::outputsize + 2][Wrapper::windowsize],
       DataType kernel[Wrapper::kernelsize][Wrapper::kernelsize],
       DataType output[NT * Wrapper::outputsize][Wrapper::outputsize]) {
+#pragma HLS INLINE /* Important! Inlining the execution allows parallelism */
     /* Execute PE */
     Wrapper op{};
     op.Execute(&input[2 * (N - 1)], kernel, &output[2 * (N - 1)]);
@@ -44,6 +45,7 @@ struct Looper<0, NT, Wrapper> {
       DataType input[NT * Wrapper::outputsize + 2][Wrapper::windowsize],
       DataType kernel[Wrapper::kernelsize][Wrapper::kernelsize],
       DataType output[NT * Wrapper::outputsize][Wrapper::outputsize]) {
+#pragma HLS INLINE /* Important! Inlining the execution allows parallelism */
     /* Do Nothing (terminate loop) */
   }
 };
@@ -54,10 +56,11 @@ struct Looper<0, NT, Wrapper> {
  */
 template <int N, class Wrapper, typename... Args>
 void do_unroll(Args... args) {
+#pragma HLS INLINE /* Important! Inlining the execution allows parallelism */
   Looper<N, N, Wrapper>::impl(args...);
 }
 
-/* Execute all the machinary */
+/* Execute all the machinary: let's suppose that this wraps all the PEs  */
 template <int B, typename... Args>
 void do_all(Args... args) {
   do_unroll<B, ama::hw::space::core::Exact<DataType, Q_K>>(args...);

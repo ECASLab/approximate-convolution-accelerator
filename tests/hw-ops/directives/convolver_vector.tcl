@@ -19,5 +19,7 @@ set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_i"
 set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_j"
 set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_e"
 set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_r"
-set_directive_inline -off "Exact<T, K>::Execute"
+
+# Important! Inlining the execution allows parallelism
+set_directive_inline "Exact<T, K>::Execute"
 set_directive_inline "mult"
