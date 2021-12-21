@@ -64,7 +64,7 @@ int main() {
 
   float b[mRows + (K-1)][nCols + (K-1)] = {0};
 
-  const float c[K][K] = {{2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}, {2.5, 2.5, 2.5}};
+  const float c[K][K] = {{0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
 
   float d[mRows + (K-1)][nCols + (K-1)] = {0};
   operations_top_sw(0, a, b, d);
