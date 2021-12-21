@@ -41,6 +41,9 @@ You can run the tests in the following way:
 cd tests/hw-ops/
 TEST=spatialconv make test
 
+# For synthesis + simulation where the testbench has arguments
+TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" TEST=open make test
+
 # Run everything - with a Kernel Size of 3x3
 export Q_KS=3
 make measure-all
@@ -88,6 +91,31 @@ test/hw-ops/measurements/
 5. Add the test to `helpers/measure-all.sh` to `ACCELS`. For example:
 `ACCELS=${ACCELS:-"spatialconv winograd"}`, where `winograd` is a new test.
 
+## Known issues
+
+### PNG and JPEG issues
+
+'''Issue:'''
+
+```
+./Vivado/2018.2/lnx64/tools/opencv/opencv_gcc/libopencv_highgui.so: undefined reference to `png_read_info@PNG12_0'
+./Vivado/2018.2/lnx64/tools/opencv/opencv_gcc/libopencv_highgui.so: undefined reference to `jpeg_finish_compress@LIBJPEG_6.2'
+./Vivado/2018.2/lnx64/tools/opencv/opencv_gcc/libopencv_highgui.so: undefined reference to `jpeg_write_scanlines@LIBJPEG_6.2'
+./Vivado/2018.2/lnx64/tools/opencv/opencv_gcc/libopencv_highgui.so: undefined reference to `png_set_packing@PNG12_0'
+```
+
+'''Fix:'''
+
+Install the libraries:
+
+```bash
+wget http://se.archive.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb
+sudo apt install ./libpng12-0_1.2.54-1ubuntu1_amd64.deb
+sudo apt-get install libjpeg62
+```
+```bash
+./open ~/Downloads/Lenna.png
+```
 Author:
 
 * Alejandro Rodriguez Figueroa <alejandrorf@estudiantec.cr>
