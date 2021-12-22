@@ -10,6 +10,15 @@
 namespace ama {
 namespace hw {
 
+/**
+ * Convolver template class
+ * It defines the interface for any convolution engine. It also defines
+ * the window sizes as a function of the kernel size.
+ * @tparam T datatype to work with.
+ * @tparam K kernel side size
+ * @tparam ADD add functor
+ * @tparam ADD mult functor
+ */
 template <typename T, int K, class ADD = arithmetic::exact::Add<T>,
           class MULT = arithmetic::exact::Mult<T>>
 class Convolver {
@@ -33,6 +42,59 @@ class Convolver {
   virtual void Execute(const T window[windowsize][windowsize],
                        const T kernel[kernelsize][kernelsize],
                        T output[outputsize][outputsize]) {}
+};
+
+/**
+ * Begin of the metaprogramming loop
+ * This struct will recurse until having a termination as a
+ * specialisation.
+ * @tparam N current iteration. In the first, it is equal to NT
+ * @tparam NT total number of iterations
+ * @tparam ENGINE class/module to iterate
+ */
+template <int N, int NT, class ENGINE>
+struct ParallelConvolver {
+  /**
+   * Execute method
+   * It exposes the execution static to interact with the ENGINE
+   * FIXME: generalise for K != 3
+   * @param input input window
+   * @param kernel kernel to convolve with
+   * @param output output window
+   */
+  static void Execute(
+      DataType input[NT * ENGINE::outputsize + 2][ENGINE::windowsize],
+      DataType kernel[ENGINE::kernelsize][ENGINE::kernelsize],
+      DataType output[NT * ENGINE::outputsize][ENGINE::outputsize]) {
+#pragma HLS INLINE /* Important! Inlining the execution allows parallelism */
+    /* Execute PE */
+    ENGINE op{};
+    op.Execute(&input[2 * (N - 1)], kernel, &output[2 * (N - 1)]);
+
+    /* Continue Loop - The next i = i - 1 */
+    ParallelConvolver<(N - 1), NT, ENGINE>::Execute(input, kernel, output);
+  }
+};
+
+/**
+ * End of the metaprogramming loop
+ */
+template <int NT, class ENGINE>
+struct ParallelConvolver<0, NT, ENGINE> {
+  /**
+   * Execute method
+   * It exposes the execution static to interact with the ENGINE
+   * @param input input window
+   * @param kernel kernel to convolve with
+   * @param output output window
+   */
+  static void Execute(
+      DataType input[NT * ENGINE::outputsize + 2][ENGINE::windowsize],
+      DataType kernel[ENGINE::kernelsize][ENGINE::kernelsize],
+      DataType output[NT * ENGINE::outputsize][ENGINE::outputsize]) {
+#pragma HLS INLINE /* Important! Inlining the execution allows parallelism */
+    /* Do Nothing (terminate loop) */
+  }
 };
 
 } /* namespace hw */
