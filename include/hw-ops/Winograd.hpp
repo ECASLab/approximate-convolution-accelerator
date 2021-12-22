@@ -18,19 +18,22 @@
 
 namespace ama {
 namespace hw {
-namespace winograd {
-namespace core {
+namespace convolvers {
 
 using namespace ama::hw;
 
 /**
- * Exact Winograd convolution functor class
- * @tparam T datatype
- * @tparam K kernel size
+ * Winograd convolution class
+ * It specialises the convolver into the exact convolution class.
+ * FIXME: fix for kernels > 3
+ * @tparam T datatype to work with.
+ * @tparam K kernel side size
+ * @tparam ADD add functor
+ * @tparam ADD mult functor
  */
 template <typename T, int K, class ADD = arithmetic::exact::Add<T>,
           class MULT = arithmetic::exact::Mult<T>>
-class Exact : public Convolver<T, K, ADD, MULT> {
+class Winograd : public Convolver<T, K, ADD, MULT> {
  public:
   /**
    * Execute the exact implementation
@@ -95,7 +98,7 @@ class Exact : public Convolver<T, K, ADD, MULT> {
 };
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::Execute(
+inline void Winograd<T, K, ADD, MULT>::Execute(
     const T window[Convolver<T, K, ADD, MULT>::windowsize]
                   [Convolver<T, K, ADD, MULT>::windowsize],
     const T kernel[Convolver<T, K, ADD, MULT>::kernelsize]
@@ -121,7 +124,7 @@ inline void Exact<T, K, ADD, MULT>::Execute(
 }
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::DetransformOutput(
+inline void Winograd<T, K, ADD, MULT>::DetransformOutput(
     const T w_h[Convolver<T, K, ADD, MULT>::windowsize]
                [Convolver<T, K, ADD, MULT>::windowsize],
     T h[Convolver<T, K, ADD, MULT>::outputsize]
@@ -137,7 +140,7 @@ inline void Exact<T, K, ADD, MULT>::DetransformOutput(
 }
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::Hadamard(
+inline void Winograd<T, K, ADD, MULT>::Hadamard(
     const T w_k[Convolver<T, K, ADD, MULT>::windowsize]
                [Convolver<T, K, ADD, MULT>::windowsize],
     const T w_w[Convolver<T, K, ADD, MULT>::windowsize]
@@ -154,7 +157,7 @@ winograd_exact_hadamard_i:
 }
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::TransformInput(
+inline void Winograd<T, K, ADD, MULT>::TransformInput(
     const T w[Convolver<T, K, ADD, MULT>::windowsize]
              [Convolver<T, K, ADD, MULT>::windowsize],
     T w_w[Convolver<T, K, ADD, MULT>::windowsize]
@@ -182,7 +185,7 @@ inline void Exact<T, K, ADD, MULT>::TransformInput(
 }
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::TransformKernel(
+inline void Winograd<T, K, ADD, MULT>::TransformKernel(
     const T k[Convolver<T, K, ADD, MULT>::kernelsize]
              [Convolver<T, K, ADD, MULT>::kernelsize],
     T w_k[Convolver<T, K, ADD, MULT>::windowsize]
@@ -214,7 +217,6 @@ inline void Exact<T, K, ADD, MULT>::TransformKernel(
   w_k[3][3] = k[2][2];
 }
 
-} /* namespace core */
-} /* namespace winograd */
+} /* namespace convolvers */
 } /* namespace hw */
 } /* namespace ama */

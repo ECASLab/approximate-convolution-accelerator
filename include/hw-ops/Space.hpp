@@ -10,19 +10,21 @@
 
 namespace ama {
 namespace hw {
-namespace space {
-namespace core {
+namespace convolvers {
 
 using namespace ama::hw;
 
 /**
- * Exact space convolution functor class
- * @tparam T datatype
- * @tparam K kernel size
+ * Spatial convolution class
+ * It specialises the convolver into the exact convolution class
+ * @tparam T datatype to work with.
+ * @tparam K kernel side size
+ * @tparam ADD add functor
+ * @tparam ADD mult functor
  */
 template <typename T, int K, class ADD = arithmetic::exact::Add<T>,
           class MULT = arithmetic::exact::Mult<T>>
-class Exact : public Convolver<T, K, ADD, MULT> {
+class Spatial : public Convolver<T, K, ADD, MULT> {
  public:
   /**
    * Execute the implementation
@@ -44,7 +46,7 @@ class Exact : public Convolver<T, K, ADD, MULT> {
 };
 
 template <typename T, int K, class ADD, class MULT>
-inline void Exact<T, K, ADD, MULT>::Execute(
+inline void Spatial<T, K, ADD, MULT>::Execute(
     const T window[Convolver<T, K, ADD, MULT>::windowsize]
                   [Convolver<T, K, ADD, MULT>::windowsize],
     const T kernel[Convolver<T, K, ADD, MULT>::kernelsize]
@@ -69,7 +71,6 @@ space_exact_execute_i:
   }
 }
 
-} /* namespace core */
-} /* namespace space */
+} /* namespace convolvers */
 } /* namespace hw */
 } /* namespace ama */

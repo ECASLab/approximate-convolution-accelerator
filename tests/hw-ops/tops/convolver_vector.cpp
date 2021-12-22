@@ -12,7 +12,7 @@ void convolver_vector_top_accel(DataType input[Q_ACCEL * 2 + 2][4],
                                 DataType kernel[Q_K][Q_K],
                                 DataType output[Q_ACCEL * 2][2]) {
 #pragma HLS INLINE
-  using Engine = ama::hw::space::core::Exact<DataType, Q_K>;
+  using Engine = ama::hw::convolvers::Spatial<DataType, Q_K>;
   ama::hw::ParallelConvolver<Q_ACCEL, Q_ACCEL, Engine>::Execute(input, kernel,
                                                                 output);
 }

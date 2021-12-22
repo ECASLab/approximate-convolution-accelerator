@@ -11,15 +11,15 @@ set_directive_array_partition -type complete -dim 0 "convolver_vector_top_accel"
 set_directive_array_partition -type complete -dim 0 "convolver_vector_top_accel" output
 
 # Register loop optimisation - set 1
-#set_directive_pipeline "Exact<T, K>::Execute/space_exact_execute_i"
-#set_directive_loop_flatten "Exact<T, K>::Execute/space_exact_execute_r"
+#set_directive_pipeline "Spatial<T, K>::Execute/space_exact_execute_i"
+#set_directive_loop_flatten "Spatial<T, K>::Execute/space_exact_execute_r"
 
 # Register loop optimisation - set 2
-set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_i"
-set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_j"
-set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_e"
-set_directive_unroll "Exact<T, K>::Execute/space_exact_execute_r"
+set_directive_unroll "Spatial<T, K>::Execute/space_exact_execute_i"
+set_directive_unroll "Spatial<T, K>::Execute/space_exact_execute_j"
+set_directive_unroll "Spatial<T, K>::Execute/space_exact_execute_e"
+set_directive_unroll "Spatial<T, K>::Execute/space_exact_execute_r"
 
 # Important! Inlining the execution allows parallelism
-set_directive_inline "Exact<T, K>::Execute"
+set_directive_inline "Spatial<T, K>::Execute"
 set_directive_inline "mult"

@@ -19,6 +19,7 @@ template <typename T>
 class Mult {
  public:
   T operator()(const T lhs, const T rhs) {
+#pragma HLS INLINE
     return lhs * rhs;
   }
 };
@@ -27,6 +28,7 @@ template <typename T>
 class Add {
  public:
   T operator()(const T lhs, const T rhs) {
+#pragma HLS INLINE
     return lhs + rhs;
   }
 };
