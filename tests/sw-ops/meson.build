@@ -9,6 +9,6 @@ convFFT_src = ['convFFT.cpp']
 
 executable('convolution', convolution_src, include_directories : include_dir, dependencies: [opencv_dep])
 executable('open', open_src, include_directories : include_dir, dependencies: [opencv_dep])
-executable('convFFT', convFFT_src, include_directories : include_dir, dependencies: [opencv_dep])
+# executable('convFFT', convFFT_src, include_directories : include_dir, dependencies: [opencv_dep])
 # For new sources:
 # replicate executable
