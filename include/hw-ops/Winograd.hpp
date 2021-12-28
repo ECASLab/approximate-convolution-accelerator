@@ -59,7 +59,7 @@ private:
    * Performs the transformation of the Input into the Winograd Domain
    * The operation performed is BtZB
    * @param w input in space domain
-   * @param w_k transformed input into Winograd domain
+   * @param w_w transformed input into Winograd domain
    */
   void TransformInput(const T w[windowsize][windowsize],
                       T w_w[windowsize][windowsize]);
