@@ -16,9 +16,3 @@ set_directive_unroll "Exact<T, K>::Hadamard/winograd_exact_hadamard_j"
 
 # Optimisation
 set_directive_inline -off "Exact<T, K>::Execute"
-
-# No Effect!
-#set_directive_inline "Exact<T, K>::TransformInput"
-#set_directive_inline "Exact<T, K>::TransformKernel"
-#set_directive_inline "Exact<T, K>::Hadamard"
-#set_directive_inline "Exact<T, K>::DetransformOutput"
