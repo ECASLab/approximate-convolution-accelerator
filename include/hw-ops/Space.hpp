@@ -10,6 +10,11 @@ namespace hw {
 namespace space {
 namespace core {
 
+/**
+ * Exact space convolution functor class
+ * @tparam T datatype
+ * @tparam K kernel size
+ */
 template <typename T, int K>
 class Exact {
  public:

@@ -18,6 +18,11 @@ namespace hw {
 namespace winograd {
 namespace core {
 
+/**
+ * Exact Winograd convolution functor class
+ * @tparam T datatype
+ * @tparam K kernel size
+ */
 template <typename T, int K> class Exact {
 public:
   /*
