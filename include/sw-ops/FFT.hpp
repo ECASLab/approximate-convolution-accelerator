@@ -10,16 +10,23 @@
 
 #pragma once
 
+/**
+ * @brief Matrix fft convolution for array
+ * It performs a lineal fft for array of complex numbers.
+ * @param x input array
+ * @param N size of the array
+ */
+
 namespace ama {
 namespace sw {
 
-template<typename T>
+template <typename T>
 using Complex = std::complex<T>;
 
-template<typename T>
+template <typename T>
 using CArray = std::valarray<Complex<T>>;
 
-template<typename C = float>
+template <typename C = float>
 void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
@@ -56,10 +63,6 @@ void fft(CArray<C> &x) {
       x[b] = t;
     }
   }
-  //// Normalize (This section make it not working correctly)
-  // Complex f = 1.0 / sqrt(N);
-  // for (unsigned int i = 0; i < N; i++)
-  //	x[i] *= f;
 }
 }  // namespace sw
 }  // namespace ama

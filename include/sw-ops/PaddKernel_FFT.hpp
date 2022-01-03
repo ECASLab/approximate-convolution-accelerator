@@ -9,10 +9,10 @@
 namespace ama {
 namespace sw {
 
-template<typename T>
+template <typename T>
 using Complex = std::complex<T>;
 
-template<typename T>
+template <typename T>
 using CArray = std::valarray<Complex<T>>;
 
 template <typename T, int M, int N, int k>
@@ -24,27 +24,24 @@ template <typename T, int M, int N, int k>
  * @param output_image kernel with the padding applied
  */
 
-void paddkernel_FFT( const T input_kernel[k][k],
-             Complex<T> output_image[M][N]) {
+void paddkernel_FFT(const T input_kernel[k][k], Complex<T> output_image[M][N]) {
   int start[2] = {0};
-  if (k == 3){
-  start[0] = (M/2)-2;
-  start[1] = (N/2)-2;
+  if (k == 3) {
+    start[0] = (M / 2) - 2;
+    start[1] = (N / 2) - 2;
+  } else if (k == 5) {
+    start[0] = (M / 2) - 3;
+    start[1] = (N / 2) - 3;
+  } else {
+    start[0] = (M / 2) - 4;
+    start[1] = (N / 2) - 4;
   }
-  else if (k == 5){
-  start[0] = (M/2)-3;
-  start[1] = (N/2)-3;
-  }
-  else {
-  start[0] = (M/2)-4;
-  start[1] = (N/2)-4;
-  }
-  
+
   for (int i{0}; i < k; ++i) {
-      for (int j{0}; j < k; ++j) {
-          output_image[start[0]+i][start[1]+j] = input_kernel[i][j];
-        }
+    for (int j{0}; j < k; ++j) {
+      output_image[start[0] + i][start[1] + j] = input_kernel[i][j];
     }
+  }
 }
 }  // namespace sw
 }  // namespace ama

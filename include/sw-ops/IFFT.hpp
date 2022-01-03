@@ -11,29 +11,35 @@
 
 #pragma once
 
+/**
+ * @brief Matrix inverse fft convolution for array
+ * It performs a lineal fft for array of complex numbers.
+ * @param x input array
+ */
+
 namespace ama {
 namespace sw {
 
-template<typename T>
+template <typename T>
 using Complex = std::complex<T>;
 
-template<typename T>
+template <typename T>
 using CArray = std::valarray<Complex<T>>;
 
-template<typename T>
+template <typename T>
 
 void ifft(CArray<T> &x) {
-    // conjugate the complex numbers
-    x = x.apply(std::conj);
- 
-    // forward fft
-    ama::sw::fft<T>( x );
- 
-    // conjugate the complex numbers again
-    x = x.apply(std::conj);
- 
-    // scale the numbers
-    x /= x.size();
+  // conjugate the complex numbers
+  x = x.apply(std::conj);
+
+  // forward fft
+  ama::sw::fft<T>(x);
+
+  // conjugate the complex numbers again
+  x = x.apply(std::conj);
+
+  // scale the numbers
+  x /= x.size();
 }
 }  // namespace sw
 }  // namespace ama
