@@ -9,8 +9,19 @@
 #include "convolver_vector.hpp"
 #include "utils/printmatrix.hpp"
 
+#if Q_K == 3
 static DataType kKernel[Q_K][Q_K] = {
     {0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
+
+#elif Q_K == 5
+static DataType kKernel[Q_K][Q_K] = {{0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04}};
+#else
+#error "Unsuitable kernel size for the testbench"
+#endif
 
 void CopyMatToArray(const cv::Mat &input, DataType *output,
                     const cv::Rect &roi) {
