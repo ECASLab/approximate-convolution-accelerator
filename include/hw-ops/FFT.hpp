@@ -10,28 +10,32 @@
 
 #pragma once
 
+/**
+ * @brief Matrix fft convolution for array
+ * It performs a lineal fft for array of complex numbers.
+ * @param x input array
+ * @param N size of the array
+ */
+
 namespace ama {
 namespace hw {
 
-const double PI = 3.141592653589793238460;
+#include "../utils/FFT_header.hpp"
 
-typedef std::complex<float> Complex;
-typedef std::valarray<Complex> CArray;
-
-void fft(CArray &x) {
+void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
-  double thetaT = 3.14159265358979323846264338328L / N;
-  Complex phiT = Complex(cos(thetaT), -sin(thetaT)), T;
+  C thetaT = kPI / N;
+  Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
   while (k > 1) {
     n = k;
     k >>= 1;
     phiT = phiT * phiT;
-    T = 1.0L;
+    T = 1.0;
     for (unsigned int l = 0; l < k; l++) {
       for (unsigned int a = l; a < N; a += n) {
         unsigned int b = a + k;
-        Complex t = x[a] - x[b];
+        auto t = x[a] - x[b];
         x[a] += x[b];
         x[b] = t * T;
       }
@@ -39,7 +43,7 @@ void fft(CArray &x) {
     }
   }
   // Decimate
-  unsigned int m = (unsigned int)log2(N);
+  auto m = static_cast<unsigned int>(log2(N));
   for (unsigned int a = 0; a < N; a++) {
     unsigned int b = a;
     // Reverse bits
@@ -49,15 +53,11 @@ void fft(CArray &x) {
     b = (((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8));
     b = ((b >> 16) | (b << 16)) >> (32 - m);
     if (b > a) {
-      Complex t = x[a];
+      auto t = x[a];
       x[a] = x[b];
       x[b] = t;
     }
   }
-  //// Normalize (This section make it not working correctly)
-  // Complex f = 1.0 / sqrt(N);
-  // for (unsigned int i = 0; i < N; i++)
-  //	x[i] *= f;
 }
 }  // namespace hw
 }  // namespace ama

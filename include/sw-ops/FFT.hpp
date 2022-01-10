@@ -20,17 +20,12 @@
 namespace ama {
 namespace sw {
 
-template <typename T>
-using Complex = std::complex<T>;
+#include "../utils/FFT_header.hpp"
 
-template <typename T>
-using CArray = std::valarray<Complex<T>>;
-
-template <typename C = float>
 void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
-  C thetaT = 3.1415926535 / N;
+  C thetaT = kPI / N;
   Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
   while (k > 1) {
     n = k;
@@ -48,7 +43,7 @@ void fft(CArray<C> &x) {
     }
   }
   // Decimate
-  unsigned int m = (unsigned int)log2(N);
+  auto m = static_cast<unsigned int>(log2(N));
   for (unsigned int a = 0; a < N; a++) {
     unsigned int b = a;
     // Reverse bits

@@ -14,11 +14,9 @@
 #define MRows 512
 #define NCols 512
 
-const double PI = 3.141592653589793238460;
-
-typedef std::complex<float> Complex;
-typedef std::valarray<Complex> CArray;
-
+// typedef std::complex<float> Complex;
+// typedef std::valarray<Complex> CArray;
+#include "FFT_conv_header.hpp"
 /**
  * @brief Matrix fft convolution for 2D images
  * It performs the convolution of two matrices from header files.

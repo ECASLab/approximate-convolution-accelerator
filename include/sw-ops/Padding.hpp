@@ -6,17 +6,17 @@
 
 #pragma once
 
-namespace ama {
-namespace sw {
-
-template <typename T, int M, int N, int k>
-
 /**
  * @brief Matrix padding
  * It performs the padding on a matrix for a kernel size k.
  * @param input_image Matrix original matrix
  * @param output_image Matrix with the padding applied
  */
+
+namespace ama {
+namespace sw {
+
+template <typename T, int M, int N, int k>
 
 void padding(const T input_image[M][N],
              T output_image[M + (k - 1)][N + (k - 1)]) {

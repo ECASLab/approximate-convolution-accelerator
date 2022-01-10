@@ -16,17 +16,10 @@
  * It performs a lineal fft for array of complex numbers.
  * @param x input array
  */
-
 namespace ama {
 namespace sw {
 
-template <typename T>
-using Complex = std::complex<T>;
-
-template <typename T>
-using CArray = std::valarray<Complex<T>>;
-
-template <typename T>
+#include "../utils/IFFT_header.hpp"
 
 void ifft(CArray<T> &x) {
   // conjugate the complex numbers
@@ -36,7 +29,9 @@ void ifft(CArray<T> &x) {
   ama::sw::fft<T>(x);
 
   // conjugate the complex numbers again
-  x = x.apply(std::conj);
+  //x = x.apply(std::conj);
+  T scale = 1. / x.size();
+  x *= scale;
 
   // scale the numbers
   x /= x.size();

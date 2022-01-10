@@ -22,17 +22,7 @@
 namespace ama {
 namespace sw {
 
-// template <typename Complex, typename CArray, int M, int N>
-
-// typedef std::complex<float> Complex;
-// typedef std::valarray<Complex> CArray;
-template <typename T>
-using Complex = std::complex<T>;
-
-template <typename T>
-using CArray = std::valarray<Complex<T>>;
-
-template <typename T, int M, int N>
+#include "../utils/IFFT_header_2D.hpp"
 
 void ifft_2D(Complex<T> input[M][N]) {
   Complex<T> input_arr[M] = {0};

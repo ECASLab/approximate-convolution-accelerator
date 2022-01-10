@@ -6,6 +6,13 @@
 
 #pragma once
 
+/**
+ * @brief Matrix padding
+ * It performs the padding on a matrix for a kernel size k.
+ * @param input_kernel Matrix original kernel
+ * @param output_image kernel with the padding applied
+ */
+
 namespace ama {
 namespace sw {
 
@@ -17,25 +24,13 @@ using CArray = std::valarray<Complex<T>>;
 
 template <typename T, int M, int N, int k>
 
-/**
- * @brief Matrix padding
- * It performs the padding on a matrix for a kernel size k.
- * @param input_kernel Matrix original kernel
- * @param output_image kernel with the padding applied
- */
-
 void paddkernel_FFT(const T input_kernel[k][k], Complex<T> output_image[M][N]) {
   int start[2] = {0};
-  if (k == 3) {
-    start[0] = (M / 2) - 2;
-    start[1] = (N / 2) - 2;
-  } else if (k == 5) {
-    start[0] = (M / 2) - 3;
-    start[1] = (N / 2) - 3;
-  } else {
-    start[0] = (M / 2) - 4;
-    start[1] = (N / 2) - 4;
-  }
+  const int offset = (k + 1) / 2;
+
+  start[0] = (M / 2) - offset;
+  start[1] = (N / 2) - offset;
+
 
   for (int i{0}; i < k; ++i) {
     for (int j{0}; j < k; ++j) {

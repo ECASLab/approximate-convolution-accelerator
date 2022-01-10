@@ -26,15 +26,7 @@
 namespace ama {
 namespace sw {
 
-// template <typename Complex, typename CArray, int M, int N>
-
-template <typename T>
-using Complex = std::complex<T>;
-
-template <typename T>
-using CArray = std::valarray<Complex<T>>;
-
-template <typename T, int M, int N, int K>
+#include "../utils/FFT_header_3D.hpp"
 
 void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
   ama::sw::fft_2D<T, M, N>(input);
@@ -46,8 +38,10 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
 
   ama::sw::fft_2D<T, M, N>(b);
 
-  int i_mid = (M / 2) - 1;
-  int j_mid = (M / 2) - 1;
+  const int i_mid = (M / 2) - 1;
+  const int j_mid = (M / 2) - 1;
+
+//Hadamard product 
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
@@ -56,12 +50,9 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
   }
 
   ama::sw::ifft_2D<T, M, N>(input);
+  ama::sw::ifft_2D<T, M, N>(a);
 
-  for (int i{0}; i < M; ++i) {
-    for (int j{0}; j < N; ++j) {
-      a[i][j] = input[i][j];
-    }
-  }
+//fixes the quadrants of output 
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
