@@ -14,6 +14,6 @@ using Complex = std::complex<T>;
 template <typename T>
 using CArray = std::valarray<Complex<T>>;
 
-template <typename C>
+// template <typename C>
 
 #define kPI 3.141592653589

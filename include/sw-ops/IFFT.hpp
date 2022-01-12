@@ -19,7 +19,9 @@
 namespace ama {
 namespace sw {
 
-#include "../utils/IFFT_header.hpp"
+#include "../utils/FFT_header.hpp"
+
+template <typename T>
 
 void ifft(CArray<T> &x) {
   // conjugate the complex numbers

@@ -22,6 +22,8 @@ namespace sw {
 
 #include "../utils/FFT_header.hpp"
 
+template <typename C>
+
 void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;

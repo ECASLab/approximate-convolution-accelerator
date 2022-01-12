@@ -26,7 +26,9 @@
 namespace ama {
 namespace sw {
 
-#include "../utils/FFT_header_3D.hpp"
+#include "../utils/FFT_header.hpp"
+
+template <typename T, int M, int N, int K>
 
 void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
   ama::sw::fft_2D<T, M, N>(input);

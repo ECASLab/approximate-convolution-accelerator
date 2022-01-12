@@ -22,7 +22,9 @@
 namespace ama {
 namespace sw {
 
-#include "../utils/IFFT_header_2D.hpp"
+#include "../utils/FFT_header.hpp"
+
+template <typename T, int M, int N>
 
 void ifft_2D(Complex<T> input[M][N]) {
   Complex<T> input_arr[M] = {0};
