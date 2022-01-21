@@ -13,4 +13,5 @@ source "$::env(DIRECTIVE_FILE)"
 csim_design -clean -argv "$::env(TB_ARGV)"
 csynth_design
 cosim_design -argv "$::env(TB_ARGV)"
+export_design -rtl verilog -format ip_catalog
 exit
