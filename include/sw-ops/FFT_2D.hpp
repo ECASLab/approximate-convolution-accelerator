@@ -8,8 +8,14 @@
 #include <iostream>
 #include <valarray>
 #include "FFT.hpp"
+#include "../utils/FFT_header.hpp"
 
 #pragma once
+
+
+
+namespace ama {
+namespace sw {
 
 /**
  * @brief Matrix fft convolution for array
@@ -18,11 +24,6 @@
  * @param N number of columns
  * @param M number of rows
  */
-
-namespace ama {
-namespace sw {
-
-#include "../utils/FFT_header.hpp"
 
 template <typename T, int M, int N>
 

@@ -4,7 +4,13 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#include "../utils/FFT_header.hpp"
+
 #pragma once
+
+
+namespace ama {
+namespace sw {
 
 /**
  * @brief Matrix padding
@@ -12,15 +18,6 @@
  * @param input_kernel Matrix original kernel
  * @param output_image kernel with the padding applied
  */
-
-namespace ama {
-namespace sw {
-
-template <typename T>
-using Complex = std::complex<T>;
-
-template <typename T>
-using CArray = std::valarray<Complex<T>>;
 
 template <typename T, int M, int N, int k>
 

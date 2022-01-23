@@ -7,8 +7,12 @@
 #include <complex>
 #include <iostream>
 #include <valarray>
+#include "../utils/FFT_header.hpp"
 
 #pragma once
+
+namespace ama {
+namespace sw {
 
 /**
  * @brief Matrix fft convolution for array
@@ -16,11 +20,6 @@
  * @param x input array
  * @param N size of the array
  */
-
-namespace ama {
-namespace sw {
-
-#include "../utils/FFT_header.hpp"
 
 template <typename C>
 

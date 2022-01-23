@@ -8,18 +8,18 @@
 #include <iostream>
 #include <valarray>
 #include "FFT.hpp"
+#include "../utils/FFT_header.hpp"
 
 #pragma once
+
+namespace ama {
+namespace sw {
 
 /**
  * @brief Matrix inverse fft convolution for array
  * It performs a lineal fft for array of complex numbers.
  * @param x input array
  */
-namespace ama {
-namespace sw {
-
-#include "../utils/FFT_header.hpp"
 
 template <typename T>
 

@@ -10,8 +10,12 @@
 #include "FFT_2D.hpp"
 #include "IFFT_2D.hpp"
 #include "PaddKernel_FFT.hpp"
+#include "../utils/FFT_header.hpp"
 
 #pragma once
+
+namespace ama {
+namespace sw {
 
 /**
  * @brief Matrix fft convolution for array
@@ -22,11 +26,6 @@
  * @param M number of rows
  * @param K size of the kernel
  */
-
-namespace ama {
-namespace sw {
-
-#include "../utils/FFT_header.hpp"
 
 template <typename T, int M, int N, int K>
 
