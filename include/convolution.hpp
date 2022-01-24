@@ -10,7 +10,9 @@
 #ifndef SW_ONLY
 #include "hw-ops/Convolution.hpp"
 #include "hw-ops/FFT.hpp"
+#include "hw-ops/cores/arithmetic-exact.hpp"
 #include "hw-ops/Padding.hpp"
+#include "hw-ops/Space.hpp"
 #include "hw-ops/Winograd.hpp"
 #endif
 
