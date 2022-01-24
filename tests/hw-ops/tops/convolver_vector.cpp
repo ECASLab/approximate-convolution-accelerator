@@ -5,7 +5,7 @@
 
 #include "convolver_vector.hpp"
 
-#include "hw-ops/Space.hpp"
+#include "convolution.hpp"
 
 /* The convolution happens in row-major but it is transferred by columns */
 void convolver_vector_top_accel(DataType input[Q_ACCEL * 2 + 2][4],
