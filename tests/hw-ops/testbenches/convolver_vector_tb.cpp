@@ -9,8 +9,19 @@
 #include "convolver_vector.hpp"
 #include "utils/printmatrix.hpp"
 
+#if Q_K == 3
 static DataType kKernel[Q_K][Q_K] = {
     {0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
+
+#elif Q_K == 5
+static DataType kKernel[Q_K][Q_K] = {{0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04},
+                                     {0.04, 0.04, 0.04, 0.04, 0.04}};
+#else
+#error "Unsuitable kernel size for the testbench"
+#endif
 
 void CopyMatToArray(const cv::Mat &input, DataType *output,
                     const cv::Rect &roi) {
@@ -37,8 +48,8 @@ int main(int argc, char **argv) {
   const std::string kDefaultOutputImage{"misc/lenna-output.png"};
   const bool kEnablePrinting = false;
   int ret = 0;
-  DataType output_batch[Q_ACCEL * 2][2];
-  DataType input_batch[Q_ACCEL * 2 + 2][4];
+  DataType output_batch[kRowsOutput][kOutputSize];
+  DataType input_batch[kRowsWindow][kWindowSize];
 
   cv::Mat input_img, output_img;
 
@@ -65,22 +76,24 @@ int main(int argc, char **argv) {
   std::cout << "Image size: " << output_img.size() << std::endl;
 
   /* Send matrix */
-  const int step_x = 2;
-  const int step_y = Q_ACCEL * 2;
+  const int step_x = kOutputSize;
+  const int step_y = kRowsOutput;
 
   for (int i{0}; i < input_img.rows; i += step_y) {
     for (int j{0}; j < input_img.cols; j += step_x) {
       /* Get the ROI and load the data */
-      cv::Rect roi_in{j, i, step_x + 2, step_y + 2};
+      cv::Rect roi_in{j, i, kWindowSize, kRowsWindow};
       CopyMatToArray(input_img_pad, input_batch[0], roi_in);
 
       /* Process matrix */
       if (kEnablePrinting) {
-        ama::utils::print_matrix<DataType, Q_ACCEL * 2 + 2, 4>(input_batch);
+        ama::utils::print_matrix<DataType, kRowsWindow, kWindowSize>(
+            input_batch);
       }
       convolver_vector_top_accel(input_batch, kKernel, output_batch);
       if (kEnablePrinting) {
-        ama::utils::print_matrix<DataType, Q_ACCEL * 2, 2>(output_batch);
+        ama::utils::print_matrix<DataType, kRowsOutput, kOutputSize>(
+            output_batch);
       }
 
       /* Get results */
