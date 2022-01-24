@@ -4,7 +4,6 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
-
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
