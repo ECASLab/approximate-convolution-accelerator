@@ -42,16 +42,19 @@ class Winograd7 : public Convolver<T, K, O, ADD, MULT> {
               [Convolver<T, K, O, ADD, MULT>::outputsize]) override;
 
  private:
+  typedef ap_fixed<T::width * 2, T::width> ProcessType;
+
   /**
    * Performs the transformation of the Input into the Winograd7 Domain
    * The operation performed is BtZB
    * @param w input in space domain
    * @param w_w transformed input into Winograd7 domain
    */
-  void TransformInput(const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
-                               [Convolver<T, K, O, ADD, MULT>::windowsize],
-                      T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-                           [Convolver<T, K, O, ADD, MULT>::windowsize]);
+  void TransformInput(
+      const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
+               [Convolver<T, K, O, ADD, MULT>::windowsize],
+      ProcessType w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+                     [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * Performs the transformation of the kernel into the Winograd7 Domain
@@ -59,10 +62,11 @@ class Winograd7 : public Convolver<T, K, O, ADD, MULT> {
    * @param k kernel in space domain
    * @param w_k transformed kernel into Winograd7 domain
    */
-  void TransformKernel(const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
-                                [Convolver<T, K, O, ADD, MULT>::kernelsize],
-                       T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-                            [Convolver<T, K, O, ADD, MULT>::windowsize]);
+  void TransformKernel(
+      const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
+               [Convolver<T, K, O, ADD, MULT>::kernelsize],
+      ProcessType w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+                     [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * Performs the Hadamard product between two spectrums
@@ -70,15 +74,16 @@ class Winograd7 : public Convolver<T, K, O, ADD, MULT> {
    * @param w_w input in Winograd7 domain
    * @param w_kw output in Winograd7 domain
    */
-  void Hadamard(const T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+  void Hadamard(
+      const ProcessType w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
                            [Convolver<T, K, O, ADD, MULT>::windowsize],
-                const T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+      const ProcessType w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
                            [Convolver<T, K, O, ADD, MULT>::windowsize],
-                T w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
+      ProcessType w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
                       [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
-  template <int M1, int N, int N2>
-  void MatMultiply(const T a[M1][N], const T b[N][N2], T c[M1][N2]);
+  template <int M1, int N, int N2, typename T1, typename T2, typename T3>
+  void MatMultiply(const T1 a[M1][N], const T2 b[N][N2], T3 c[M1][N2]);
 
   /**
    * Performs the transformation of the output into the space Domain
@@ -86,10 +91,11 @@ class Winograd7 : public Convolver<T, K, O, ADD, MULT> {
    * @param w_h output in Winograd7 domain
    * @param h transformed output into space domain
    */
-  void DetransformOutput(const T w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
-                                    [Convolver<T, K, O, ADD, MULT>::windowsize],
-                         T h[Convolver<T, K, O, ADD, MULT>::outputsize]
-                            [Convolver<T, K, O, ADD, MULT>::outputsize]);
+  void DetransformOutput(
+      const ProcessType w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
+                           [Convolver<T, K, O, ADD, MULT>::windowsize],
+      T h[Convolver<T, K, O, ADD, MULT>::outputsize]
+         [Convolver<T, K, O, ADD, MULT>::outputsize]);
 };
 
 template <typename T, int K, int O, class ADD, class MULT>
@@ -102,12 +108,12 @@ inline void Winograd7<T, K, O, ADD, MULT>::Execute(
             [Convolver<T, K, O, ADD, MULT>::outputsize]) {
   static_assert(K == 7 && O == 2, "Winograd7 only supports K = 7 and O = 2");
 
-  T w_window[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
-  T w_kernel[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
-  T w_output[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_window[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_kernel[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_output[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
 
   /* Transform */
   TransformInput(window, w_window);
@@ -121,10 +127,10 @@ inline void Winograd7<T, K, O, ADD, MULT>::Execute(
 }
 
 template <typename T, int K, int O, class ADD, class MULT>
-template <int M1, int N, int N2>
-inline void Winograd7<T, K, O, ADD, MULT>::MatMultiply(const T a[M1][N],
-                                                       const T b[N][N2],
-                                                       T c[M1][N2]) {
+template <int M1, int N, int N2, typename T1, typename T2, typename T3>
+inline void Winograd7<T, K, O, ADD, MULT>::MatMultiply(const T1 a[M1][N],
+                                                       const T2 b[N][N2],
+                                                       T3 c[M1][N2]) {
 winograd_exact_matmul_i:
   for (int i{0}; i < M1; ++i) {
   winograd_exact_matmul_j:
@@ -140,19 +146,20 @@ winograd_exact_matmul_i:
 
 template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd7<T, K, O, ADD, MULT>::DetransformOutput(
-    const T w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
+    const Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
     T h[Convolver<T, K, O, ADD, MULT>::outputsize]
        [Convolver<T, K, O, ADD, MULT>::outputsize]) {
   // A.T * H * A
   const int kAtRows = 2;
   const int kAtCols = 8;
 
-  T At[kAtRows][kAtCols] = {{1, 1, 1, 1, 1, 1, 1, 0},
-                            {0, 1, -1, 2, -2, 0.5, -0.5, 1}};
-  T A[kAtCols][kAtRows] = {{1, 0},  {1, 1},   {1, -1},   {1, 2},
-                           {1, -2}, {1, 0.5}, {1, -0.5}, {0, 1}};
-  T hi[kAtRows][Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType At[kAtRows][kAtCols] = {{1, 1, 1, 1, 1, 1, 1, 0},
+                                      {0, 1, -1, 2, -2, 0.5, -0.5, 1}};
+  ProcessType A[kAtCols][kAtRows] = {{1, 0},  {1, 1},   {1, -1},   {1, 2},
+                                     {1, -2}, {1, 0.5}, {1, -0.5}, {0, 1}};
+  ProcessType hi[kAtRows][Convolver<T, K, O, ADD, MULT>::windowsize];
 
   MatMultiply<kAtRows, kAtCols, Convolver<T, K, O, ADD, MULT>::windowsize>(
       At, w_h, hi);
@@ -162,12 +169,15 @@ inline void Winograd7<T, K, O, ADD, MULT>::DetransformOutput(
 
 template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd7<T, K, O, ADD, MULT>::Hadamard(
-    const T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
-    const T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
-    T w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
-          [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    const Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
+    const Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
+    Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
+            [Convolver<T, K, O, ADD, MULT>::windowsize]) {
 winograd_exact_hadamard_i:
   for (int i{0}; i < Convolver<T, K, O, ADD, MULT>::windowsize; ++i) {
   winograd_exact_hadamard_j:
@@ -181,28 +191,30 @@ template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd7<T, K, O, ADD, MULT>::TransformInput(
     const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
              [Convolver<T, K, O, ADD, MULT>::windowsize],
-    T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-         [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize]) {
   // B.T * W * B
   const int kBFields = 8;
 
-  T Bt[kBFields][kBFields] = {{1, 0, -5.25, 0, 5.25, 0, -1, 0},
-                              {0, 1, 1, -4.25, -4.25, 1, 1, 0},
-                              {0, -1, 1, 4.25, -4.25, -1, 1, 0},
-                              {0, 0.5, 0.25, -2.5, -1.25, 2, 1, 0},
-                              {0, -0.5, 0.25, 2.5, -1.25, -2, 1, 0},
-                              {0, 2, 4, -2.5, -5, 0.5, 1, 0},
-                              {0, -2, 4, 2.5, -5, -0.5, 1, 0},
-                              {0, -1, 0, 5.25, 0, -5.25, 0, 1}};
-  T B[kBFields][kBFields] = {{1, 0, 0, 0, 0, 0, 0, 0},
-                             {0, 1, -1, 0.5, -0.5, 2, -2, -1},
-                             {-5.25, 1, 1, 0.25, 0.25, 4, 4, 0},
-                             {0, -4.25, 4.25, -2.5, 2.5, -2.5, 2.5, 5.25},
-                             {5.25, -4.25, -4.25, -1.25, -1.25, -5, -5, 0},
-                             {0, 1, -1, 2, -2, 0.5, -0.5, -5.25},
-                             {-1, 1, 1, 1, 1, 1, 1, 0},
-                             {0, 0, 0, 0, 0, 0, 0, 1}};
-  T wi[kBFields][kBFields];
+  ProcessType Bt[kBFields][kBFields] = {{1, 0, -5.25, 0, 5.25, 0, -1, 0},
+                                        {0, 1, 1, -4.25, -4.25, 1, 1, 0},
+                                        {0, -1, 1, 4.25, -4.25, -1, 1, 0},
+                                        {0, 0.5, 0.25, -2.5, -1.25, 2, 1, 0},
+                                        {0, -0.5, 0.25, 2.5, -1.25, -2, 1, 0},
+                                        {0, 2, 4, -2.5, -5, 0.5, 1, 0},
+                                        {0, -2, 4, 2.5, -5, -0.5, 1, 0},
+                                        {0, -1, 0, 5.25, 0, -5.25, 0, 1}};
+  ProcessType B[kBFields][kBFields] = {
+      {1, 0, 0, 0, 0, 0, 0, 0},
+      {0, 1, -1, 0.5, -0.5, 2, -2, -1},
+      {-5.25, 1, 1, 0.25, 0.25, 4, 4, 0},
+      {0, -4.25, 4.25, -2.5, 2.5, -2.5, 2.5, 5.25},
+      {5.25, -4.25, -4.25, -1.25, -1.25, -5, -5, 0},
+      {0, 1, -1, 2, -2, 0.5, -0.5, -5.25},
+      {-1, 1, 1, 1, 1, 1, 1, 0},
+      {0, 0, 0, 0, 0, 0, 0, 1}};
+  ProcessType wi[kBFields][kBFields];
 
   MatMultiply<kBFields, kBFields, Convolver<T, K, O, ADD, MULT>::windowsize>(
       Bt, w, wi);
@@ -214,28 +226,31 @@ template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd7<T, K, O, ADD, MULT>::TransformKernel(
     const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
              [Convolver<T, K, O, ADD, MULT>::kernelsize],
-    T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-         [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    Winograd7<T, K, O, ADD, MULT>::ProcessType
+        w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize]) {
   // G * K * G.T
   const int kGRows = 8;
   const int kGCols = 7;
 
-  T G[kGRows][kGCols] = {{1, 0, 0, 0, 0, 0, 0},
-                         {-0.22, -0.22, -0.22, -0.22, -0.22, -0.22, -0.22},
-                         {-0.22, 0.22, -0.22, 0.22, -0.22, 0.22, -0.22},
-                         {0.011, 0.022, 0.044, 0.088, 0.178, 0.356, 0.711},
-                         {0.011, -0.022, 0.044, -0.088, 0.178, -0.356, 0.711},
-                         {0.711, 0.356, 0.178, 0.088, 0.044, 0.022, 0.011},
-                         {0.711, -0.356, 0.178, -0.088, 0.044, -0.022, 0.011},
-                         {0, 0, 0, 0, 0, 0, 1}};
-  T Gt[kGCols][kGRows] = {{1, -0.22, -0.22, 0.011, 0.011, 0.711, 0.711, 0},
-                          {0, -0.22, 0.22, 0.022, -0.022, 0.356, -0.356, 0},
-                          {0, -0.22, -0.22, 0.044, 0.044, 0.178, 0.178, 0},
-                          {0, -0.22, 0.22, 0.088, -0.088, 0.088, -0.088, 0},
-                          {0, -0.22, -0.22, 0.178, 0.178, 0.044, 0.044, 0},
-                          {0, -0.22, 0.22, 0.356, -0.356, 0.022, -0.022, 0},
-                          {0, -0.22, -0.22, 0.711, 0.711, 0.011, 0.011, 1}};
-  T ki[kGRows][K];
+  ProcessType G[kGRows][kGCols] = {
+      {1, 0, 0, 0, 0, 0, 0},
+      {-0.22, -0.22, -0.22, -0.22, -0.22, -0.22, -0.22},
+      {-0.22, 0.22, -0.22, 0.22, -0.22, 0.22, -0.22},
+      {0.011, 0.022, 0.044, 0.088, 0.178, 0.356, 0.711},
+      {0.011, -0.022, 0.044, -0.088, 0.178, -0.356, 0.711},
+      {0.711, 0.356, 0.178, 0.088, 0.044, 0.022, 0.011},
+      {0.711, -0.356, 0.178, -0.088, 0.044, -0.022, 0.011},
+      {0, 0, 0, 0, 0, 0, 1}};
+  ProcessType Gt[kGCols][kGRows] = {
+      {1, -0.22, -0.22, 0.011, 0.011, 0.711, 0.711, 0},
+      {0, -0.22, 0.22, 0.022, -0.022, 0.356, -0.356, 0},
+      {0, -0.22, -0.22, 0.044, 0.044, 0.178, 0.178, 0},
+      {0, -0.22, 0.22, 0.088, -0.088, 0.088, -0.088, 0},
+      {0, -0.22, -0.22, 0.178, 0.178, 0.044, 0.044, 0},
+      {0, -0.22, 0.22, 0.356, -0.356, 0.022, -0.022, 0},
+      {0, -0.22, -0.22, 0.711, 0.711, 0.011, 0.011, 1}};
+  ProcessType ki[kGRows][K];
 
   MatMultiply<kGRows, kGCols, K>(G, k, ki);
   MatMultiply<kGRows, K, kGRows>(ki, Gt, w_k);

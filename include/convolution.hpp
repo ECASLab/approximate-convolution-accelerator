@@ -14,6 +14,8 @@
 #include "hw-ops/Padding.hpp"
 #include "hw-ops/Space.hpp"
 #include "hw-ops/Winograd.hpp"
+#include "hw-ops/Winograd5.hpp"
+#include "hw-ops/Winograd7.hpp"
 #else
 /* Software ops */
 #include "sw-ops/Convolution.hpp"

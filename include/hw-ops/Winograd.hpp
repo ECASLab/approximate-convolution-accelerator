@@ -50,16 +50,19 @@ class Winograd : public Convolver<T, K, O, ADD, MULT> {
               [Convolver<T, K, O, ADD, MULT>::outputsize]) override;
 
  private:
+  typedef ap_fixed<T::width * 2, T::width> ProcessType;
+
   /**
    * Performs the transformation of the Input into the Winograd Domain
    * The operation performed is BtZB
    * @param w input in space domain
    * @param w_w transformed input into Winograd domain
    */
-  void TransformInput(const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
-                               [Convolver<T, K, O, ADD, MULT>::windowsize],
-                      T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-                           [Convolver<T, K, O, ADD, MULT>::windowsize]);
+  void TransformInput(
+      const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
+               [Convolver<T, K, O, ADD, MULT>::windowsize],
+      ProcessType w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+                     [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * Performs the transformation of the kernel into the Winograd Domain
@@ -67,10 +70,11 @@ class Winograd : public Convolver<T, K, O, ADD, MULT> {
    * @param k kernel in space domain
    * @param w_k transformed kernel into Winograd domain
    */
-  void TransformKernel(const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
-                                [Convolver<T, K, O, ADD, MULT>::kernelsize],
-                       T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-                            [Convolver<T, K, O, ADD, MULT>::windowsize]);
+  void TransformKernel(
+      const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
+               [Convolver<T, K, O, ADD, MULT>::kernelsize],
+      ProcessType w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+                     [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * Performs the Hadamard product between two spectrums
@@ -78,11 +82,12 @@ class Winograd : public Convolver<T, K, O, ADD, MULT> {
    * @param w_w input in Winograd domain
    * @param w_kw output in Winograd domain
    */
-  void Hadamard(const T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+  void Hadamard(
+      const ProcessType w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
                            [Convolver<T, K, O, ADD, MULT>::windowsize],
-                const T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+      const ProcessType w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
                            [Convolver<T, K, O, ADD, MULT>::windowsize],
-                T w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
+      ProcessType w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
                       [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
@@ -91,10 +96,11 @@ class Winograd : public Convolver<T, K, O, ADD, MULT> {
    * @param w_h output in Winograd domain
    * @param h transformed output into space domain
    */
-  void DetransformOutput(const T w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
-                                    [Convolver<T, K, O, ADD, MULT>::windowsize],
-                         T h[Convolver<T, K, O, ADD, MULT>::outputsize]
-                            [Convolver<T, K, O, ADD, MULT>::outputsize]);
+  void DetransformOutput(
+      const ProcessType w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
+                           [Convolver<T, K, O, ADD, MULT>::windowsize],
+      T h[Convolver<T, K, O, ADD, MULT>::outputsize]
+         [Convolver<T, K, O, ADD, MULT>::outputsize]);
 };
 
 template <typename T, int K, int O, class ADD, class MULT>
@@ -107,12 +113,12 @@ inline void Winograd<T, K, O, ADD, MULT>::Execute(
             [Convolver<T, K, O, ADD, MULT>::outputsize]) {
   static_assert(K == 3 && O == 2, "Winograd only supports K = 3 and O = 2");
 
-  T w_window[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
-  T w_kernel[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
-  T w_output[Convolver<T, K, O, ADD, MULT>::windowsize]
-            [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_window[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_kernel[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
+  ProcessType w_output[Convolver<T, K, O, ADD, MULT>::windowsize]
+                      [Convolver<T, K, O, ADD, MULT>::windowsize];
 
   /* Transform */
   TransformInput(window, w_window);
@@ -127,8 +133,9 @@ inline void Winograd<T, K, O, ADD, MULT>::Execute(
 
 template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd<T, K, O, ADD, MULT>::DetransformOutput(
-    const T w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
+    const Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_h[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
     T h[Convolver<T, K, O, ADD, MULT>::outputsize]
        [Convolver<T, K, O, ADD, MULT>::outputsize]) {
   h[0][0] = w_h[0][0] + w_h[0][1] + w_h[0][2] + w_h[1][0] + w_h[1][1] +
@@ -143,12 +150,15 @@ inline void Winograd<T, K, O, ADD, MULT>::DetransformOutput(
 
 template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd<T, K, O, ADD, MULT>::Hadamard(
-    const T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
-    const T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-               [Convolver<T, K, O, ADD, MULT>::windowsize],
-    T w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
-          [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    const Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
+    const Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize],
+    Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
+            [Convolver<T, K, O, ADD, MULT>::windowsize]) {
 winograd_exact_hadamard_i:
   for (int i{0}; i < Convolver<T, K, O, ADD, MULT>::windowsize; ++i) {
   winograd_exact_hadamard_j:
@@ -162,8 +172,9 @@ template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd<T, K, O, ADD, MULT>::TransformInput(
     const T w[Convolver<T, K, O, ADD, MULT>::windowsize]
              [Convolver<T, K, O, ADD, MULT>::windowsize],
-    T w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
-         [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_w[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize]) {
   /*
    * TODO: Factorise operations. It may lead to overflow if not taken into
    * account
@@ -190,8 +201,9 @@ template <typename T, int K, int O, class ADD, class MULT>
 inline void Winograd<T, K, O, ADD, MULT>::TransformKernel(
     const T k[Convolver<T, K, O, ADD, MULT>::kernelsize]
              [Convolver<T, K, O, ADD, MULT>::kernelsize],
-    T w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
-         [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+    Winograd<T, K, O, ADD, MULT>::ProcessType
+        w_k[Convolver<T, K, O, ADD, MULT>::windowsize]
+           [Convolver<T, K, O, ADD, MULT>::windowsize]) {
   /* TODO: Factorise operations */
   w_k[0][0] = k[0][0];
   w_k[0][1] = (k[0][0] + k[0][1] + k[0][2]) >> 1;
