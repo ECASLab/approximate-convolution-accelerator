@@ -5,11 +5,9 @@
 
 #include "winograd.hpp"
 
-#include "hw-ops/Winograd.hpp"
-
-void winograd_top_accel(DataType input[Q_K + 1][Q_K + 1],
-                        DataType kernel[Q_K][Q_K],
-                        DataType output[Q_K - 1][Q_K - 1]) {
-  ama::hw::convolvers::Winograd<DataType, Q_K> op;
+void winograd_top_accel(DataType input[kRowsWindow][kWindowSize],
+                        DataType kernel[kKernelSize][kKernelSize],
+                        DataType output[kRowsOutput][kOutputSize]) {
+  ama::hw::convolvers::Winograd<DataType, Q_K, Q_O> op;
   op.Execute(input, kernel, output);
 }
