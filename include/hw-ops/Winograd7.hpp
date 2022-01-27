@@ -18,7 +18,7 @@ using namespace ama::hw;
  * Winograd7 convolution class
  * It specialises the convolver into the exact convolution class.
  * @tparam T datatype to work with.
- * @tparam K kernel side size: fixed to 5
+ * @tparam K kernel side size: fixed to 7
  * @tparam O output window size
  * @tparam ADD add functor
  * @tparam ADD mult functor
@@ -77,7 +77,7 @@ class Winograd7 : public Convolver<T, K, O, ADD, MULT> {
                 T w_kw[Convolver<T, K, O, ADD, MULT>::windowsize]
                       [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
-  template<int M1, int N, int N2>
+  template <int M1, int N, int N2>
   void MatMultiply(const T a[M1][N], const T b[N][N2], T c[M1][N2]);
 
   /**
@@ -122,14 +122,15 @@ inline void Winograd7<T, K, O, ADD, MULT>::Execute(
 
 template <typename T, int K, int O, class ADD, class MULT>
 template <int M1, int N, int N2>
-inline void Winograd7<T, K, O, ADD, MULT>::MatMultiply(
-    const T a[M1][N], const T b[N][N2], T c[M1][N2]) {
+inline void Winograd7<T, K, O, ADD, MULT>::MatMultiply(const T a[M1][N],
+                                                       const T b[N][N2],
+                                                       T c[M1][N2]) {
 winograd_exact_matmul_i:
   for (int i{0}; i < M1; ++i) {
-winograd_exact_matmul_j:
+  winograd_exact_matmul_j:
     for (int j{0}; j < N2; ++j) {
       c[i][j] = 0;
-winograd_exact_matmul_k:
+    winograd_exact_matmul_k:
       for (int k{0}; k < N; ++k) {
         c[i][j] += a[i][k] * b[k][j];
       }
@@ -147,25 +148,16 @@ inline void Winograd7<T, K, O, ADD, MULT>::DetransformOutput(
   const int kAtRows = 2;
   const int kAtCols = 8;
 
-  T At[kAtRows][kAtCols] = {
-    {1,1,1,1,1,1,1,0},
-    {0,1,-1,2,-2,0.5,-0.5,1}};
-  T A[kAtCols][kAtRows] = {
-    {1, 0},
-    {1, 1},
-    {1, -1},
-    {1, 2},
-    {1, -2},
-    {1,0.5},
-    {1,-0.5},
-    {0, 1}};
+  T At[kAtRows][kAtCols] = {{1, 1, 1, 1, 1, 1, 1, 0},
+                            {0, 1, -1, 2, -2, 0.5, -0.5, 1}};
+  T A[kAtCols][kAtRows] = {{1, 0},  {1, 1},   {1, -1},   {1, 2},
+                           {1, -2}, {1, 0.5}, {1, -0.5}, {0, 1}};
   T hi[kAtRows][Convolver<T, K, O, ADD, MULT>::windowsize];
-  #pragma HLS array_partition variable=At complete dim=0;
-  #pragma HLS array_partition variable=A complete dim=0;
-  #pragma HLS array_partition variable=hi complete dim=0;
 
-  MatMultiply<kAtRows, kAtCols, Convolver<T, K, O, ADD, MULT>::windowsize>(At, w_h, hi);
-  MatMultiply<kAtRows, Convolver<T, K, O, ADD, MULT>::windowsize, kAtRows>(hi, A, h);
+  MatMultiply<kAtRows, kAtCols, Convolver<T, K, O, ADD, MULT>::windowsize>(
+      At, w_h, hi);
+  MatMultiply<kAtRows, Convolver<T, K, O, ADD, MULT>::windowsize, kAtRows>(
+      hi, A, h);
 }
 
 template <typename T, int K, int O, class ADD, class MULT>
@@ -194,31 +186,28 @@ inline void Winograd7<T, K, O, ADD, MULT>::TransformInput(
   // B.T * W * B
   const int kBFields = 8;
 
-  T Bt[kBFields][kBFields] = {
-    {1, 0  ,-5.25, 0   , 5.25, 0,-1,0},
-    {0, 1  , 1   ,-4.25,-4.25, 1, 1,0},
-    {0,-1  , 1   , 4.25,-4.25,-1, 1,0},
-    {0, 0.5, 0.25, -2.5, -1.25, 2, 1, 0},
-    {0,-0.5, 0.25,  2.5, -1.25,-2, 1, 0},
-    {0,   2,    4, -2.5,    -5, 0.5, 1, 0},
-    {0,  -2,    4,  2.5,    -5,-0.5, 1, 0},
-    {0,  -1,    0, 5.25,     0,-5.25,0,1}};
-  T B[kBFields][kBFields] = {
-    {1,0,0,0,0,0,0,0},
-    {0,1,-1,0.5,-0.25,2,-2,-1},
-    {-5.25,1,1,0.25,0.25,4,4,0},
-    {0,-4.25,4.25,-2.5,2.5,-2.5,2.5,5.25},
-    {5.25,-4.25,-4.25,-1.25,-1.25,-5,-5,0},
-    {0,1,-1,2,-2,0.5,-0.5,-5.25},
-    {-1,1,1,1,1,1,1,0},
-    {0,0,0,0,0,0,0,1}};
+  T Bt[kBFields][kBFields] = {{1, 0, -5.25, 0, 5.25, 0, -1, 0},
+                              {0, 1, 1, -4.25, -4.25, 1, 1, 0},
+                              {0, -1, 1, 4.25, -4.25, -1, 1, 0},
+                              {0, 0.5, 0.25, -2.5, -1.25, 2, 1, 0},
+                              {0, -0.5, 0.25, 2.5, -1.25, -2, 1, 0},
+                              {0, 2, 4, -2.5, -5, 0.5, 1, 0},
+                              {0, -2, 4, 2.5, -5, -0.5, 1, 0},
+                              {0, -1, 0, 5.25, 0, -5.25, 0, 1}};
+  T B[kBFields][kBFields] = {{1, 0, 0, 0, 0, 0, 0, 0},
+                             {0, 1, -1, 0.5, -0.5, 2, -2, -1},
+                             {-5.25, 1, 1, 0.25, 0.25, 4, 4, 0},
+                             {0, -4.25, 4.25, -2.5, 2.5, -2.5, 2.5, 5.25},
+                             {5.25, -4.25, -4.25, -1.25, -1.25, -5, -5, 0},
+                             {0, 1, -1, 2, -2, 0.5, -0.5, -5.25},
+                             {-1, 1, 1, 1, 1, 1, 1, 0},
+                             {0, 0, 0, 0, 0, 0, 0, 1}};
   T wi[kBFields][kBFields];
-  #pragma HLS array_partition variable=Bt complete dim=0;
-  #pragma HLS array_partition variable=B complete dim=0;
-  #pragma HLS array_partition variable=wi complete dim=0;
 
-  MatMultiply<kBFields, kBFields, Convolver<T, K, O, ADD, MULT>::windowsize>(Bt, w, wi);
-  MatMultiply<kBFields, Convolver<T, K, O, ADD, MULT>::windowsize, kBFields>(wi, B, w_w);
+  MatMultiply<kBFields, kBFields, Convolver<T, K, O, ADD, MULT>::windowsize>(
+      Bt, w, wi);
+  MatMultiply<kBFields, Convolver<T, K, O, ADD, MULT>::windowsize, kBFields>(
+      wi, B, w_w);
 }
 
 template <typename T, int K, int O, class ADD, class MULT>
@@ -231,27 +220,22 @@ inline void Winograd7<T, K, O, ADD, MULT>::TransformKernel(
   const int kGRows = 8;
   const int kGCols = 7;
 
-  T G[kGRows][kGCols] = {
-    {1     , 0    ,     0,     0,     0,     0,    0},
-    {-0.22 ,-0.22 ,-0.22 ,-0.22 ,-0.22 ,-0.22 ,-0.22 },
-    {-0.22 , 0.22 ,-0.22 , 0.22 ,-0.22 , 0.22 ,-0.22 },
-    { 0.011, 0.022, 0.044, 0.088, 0.178, 0.356, 0.711},
-    { 0.011,-0.022, 0.044,-0.088, 0.178,-0.356, 0.711},
-    { 0.711, 0.356, 0.178, 0.088, 0.044, 0.022, 0.011},
-    { 0.711,-0.356, 0.178,-0.088, 0.044,-0.022, 0.011},
-    {     0,     0,     0,     0,     0,     0,     1}};
-  T Gt[kGCols][kGRows] = {
-    {1,-0.22,-0.22,0.011,0.011,0.711,0.711,0},
-    {0,-0.22,0.22,0.022,-0.022,0.356,-0.356,0},
-    {0,-0.22,-0.22,0.044,0.044,0.178,0.178,0},
-    {0,-0.22, 0.22,0.088,-0.088,0.088,-0.088,0},
-    {0,-0.22,-0.22,0.178,0.178,0.044,0.044,0},
-    {0,-0.22,0.22,0.356,-0.356,0.022,-0.022,0},
-    {0,-0.22,-0.22,0.711,0.711,0.011,0.011,1}};
+  T G[kGRows][kGCols] = {{1, 0, 0, 0, 0, 0, 0},
+                         {-0.22, -0.22, -0.22, -0.22, -0.22, -0.22, -0.22},
+                         {-0.22, 0.22, -0.22, 0.22, -0.22, 0.22, -0.22},
+                         {0.011, 0.022, 0.044, 0.088, 0.178, 0.356, 0.711},
+                         {0.011, -0.022, 0.044, -0.088, 0.178, -0.356, 0.711},
+                         {0.711, 0.356, 0.178, 0.088, 0.044, 0.022, 0.011},
+                         {0.711, -0.356, 0.178, -0.088, 0.044, -0.022, 0.011},
+                         {0, 0, 0, 0, 0, 0, 1}};
+  T Gt[kGCols][kGRows] = {{1, -0.22, -0.22, 0.011, 0.011, 0.711, 0.711, 0},
+                          {0, -0.22, 0.22, 0.022, -0.022, 0.356, -0.356, 0},
+                          {0, -0.22, -0.22, 0.044, 0.044, 0.178, 0.178, 0},
+                          {0, -0.22, 0.22, 0.088, -0.088, 0.088, -0.088, 0},
+                          {0, -0.22, -0.22, 0.178, 0.178, 0.044, 0.044, 0},
+                          {0, -0.22, 0.22, 0.356, -0.356, 0.022, -0.022, 0},
+                          {0, -0.22, -0.22, 0.711, 0.711, 0.011, 0.011, 1}};
   T ki[kGRows][K];
-  #pragma HLS array_partition variable=Gt complete dim=0;
-  #pragma HLS array_partition variable=G complete dim=0;
-  #pragma HLS array_partition variable=ki complete dim=0;
 
   MatMultiply<kGRows, kGCols, K>(G, k, ki);
   MatMultiply<kGRows, K, kGRows>(ki, Gt, w_k);
