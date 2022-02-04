@@ -20,18 +20,19 @@ namespace sw {
  * @param N size of the array
  */
 
-template <typename C>
+template <typename C = float>
 
 void fft(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
-  C thetaT = kPI / N;
-  Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
+   C thetaT = kPI / N;
+   Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
+
   while (k > 1) {
     n = k;
     k >>= 1;
     phiT = phiT * phiT;
-    T = 1.0;
+    T = 1.0L;
     for (unsigned int l = 0; l < k; l++) {
       for (unsigned int a = l; a < N; a += n) {
         unsigned int b = a + k;

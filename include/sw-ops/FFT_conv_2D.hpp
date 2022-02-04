@@ -49,7 +49,7 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
     }
   }
 
-  ama::sw::ifft_2D<T, M, N>(input);
+  //ama::sw::ifft_2D<T, M, N>(input);
   ama::sw::ifft_2D<T, M, N>(a);
 
 //fixes the quadrants of output 
