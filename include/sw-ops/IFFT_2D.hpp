@@ -8,9 +8,8 @@
 #include <iostream>
 #include <valarray>
 #include "IFFT.hpp"
-#include "../utils/FFT_header.hpp"
-
 #pragma once
+#include "../utils/FFT_header.hpp"
 
 namespace ama {
 namespace sw {

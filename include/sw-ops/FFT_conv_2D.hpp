@@ -10,9 +10,8 @@
 #include "FFT_2D.hpp"
 #include "IFFT_2D.hpp"
 #include "PaddKernel_FFT.hpp"
-#include "../utils/FFT_header.hpp"
-
 #pragma once
+#include "../utils/FFT_header.hpp"
 
 namespace ama {
 namespace sw {
@@ -46,7 +45,7 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
-      input[i][j] = input[i][j] * b[i][j];
+      a[i][j] = input[i][j] * b[i][j];
     }
   }
 

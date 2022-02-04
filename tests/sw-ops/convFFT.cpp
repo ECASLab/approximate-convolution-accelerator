@@ -14,7 +14,6 @@
 #define MRows 512
 #define NCols 512
 
-#include "FFT_conv_header.hpp"
 /**
  * @brief Matrix fft convolution for 2D images
  * It performs the convolution of two matrices from header files.
@@ -31,7 +30,7 @@ int main(int argc, char** argv) {
   }
   cv::Mat img = cv::imread(argv[1], 0);
 
-  Complex a[MRows][NCols] = {0};
+  std::complex<float> a[MRows][NCols] = {0};
 
   for (int i{0}; i < MRows; ++i) {
     for (int j{0}; j < NCols; ++j) {

@@ -8,10 +8,8 @@
 #include <iostream>
 #include <valarray>
 #include "FFT.hpp"
-#include "../utils/FFT_header.hpp"
-
 #pragma once
-
+#include "../utils/FFT_header.hpp"
 
 
 namespace ama {
