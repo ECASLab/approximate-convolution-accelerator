@@ -49,7 +49,10 @@ int main(int argc, char** argv) {
 #error "Cannot proceed with the given kernel"
 #endif
 
-  ama::sw::fft_conv_2D<float, MRows, NCols, K>(a, c);
+  //ama::hw::fft_conv_2D<float, MRows, NCols, K>(a, c);
+
+  ama::hw::convolvers::fft<float, MRows, NCols, K> op{};
+  op.Execute(a, c);
 
   cv::Mat a_img(MRows, NCols, CV_8U, a);
   for (int i{0}; i < MRows; ++i) {

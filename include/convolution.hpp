@@ -14,6 +14,7 @@
 #include "hw-ops/Padding.hpp"
 #include "hw-ops/Space.hpp"
 #include "hw-ops/Winograd.hpp"
+#include "hw-ops/FFT_class.hpp"
 #else
 /* Software ops */
 #include "sw-ops/Convolution.hpp"
@@ -23,6 +24,7 @@
 //#include "sw-ops/IFFT.hpp"
 //#include "sw-ops/IFFT_2D.hpp"
 #include "sw-ops/Padding.hpp"
+#include "hw-ops/FFT_class.hpp"
 //#include "sw-ops/PaddKernel_FFT.hpp"
 #endif
 
