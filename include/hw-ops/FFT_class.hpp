@@ -32,19 +32,19 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
  public:
   /**
    * Execute the exact implementation
-   * @param window input window to convolve with the kernel
+   * @param input input to convolve with the kernel
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  virtual void Execute(Complex<T> input[M][N], const T kernel[K][K]);
+  virtual void Execute(Complex<T> input[M][N], const T kernel[K][K], Complex<T> output[M][N]);
 
  private:
   /**
-   * @brief Matrix fft convolution for array
-   * It performs a lineal fft for array of complex numbers.
-   * @param x input array
-   * @param N size of the array
-   */
+ * @brief Matrix fft convolution for array
+ * It performs a lineal fft for array of complex numbers.
+ * @param x input array
+ * @param N size of the array
+ */
   void fft_1D(CArray<T> &x);
 /**
  * @brief Matrix fft convolution for array
@@ -72,11 +72,10 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
   void ifft_2D(Complex<T> input[M][N]);
 
 /**
- * @brief Matrix fft convolution for array
- * It performs a lineal fft for array of complex numbers.
- * @param input input matrix
- * @param N number of columns
- * @param M number of rows
+ * @brief Matrix padding
+ * It performs the padding on a matrix for a kernel size k.
+ * @param input_kernel Matrix original kernel
+ * @param output_image kernel with the padding applied
  */
  void paddkernel_FFT(const T input_kernel[K][K], Complex<T> output_image[M][N]);
 
@@ -84,11 +83,10 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
 inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
-  Complex<T> input[M][N], const T kernel[K][K]) {
+  Complex<T> input[M][N], const T kernel[K][K], Complex<T> output[M][N]) {
   fft_2D(input);
 
   Complex<T> b[M][N] = {0};
-  Complex<T> a[M][N] = {0};
 
   paddkernel_FFT(kernel, b);
 
@@ -101,23 +99,23 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
-      a[i][j] = input[i][j] * b[i][j];
+      input[i][j] = input[i][j] * b[i][j];
     }
   }
-  ifft_2D(a);
+  ifft_2D(input);
 
 //fixes the quadrants of output 
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
       if (i <= i_mid && j <= j_mid) {
-        input[i + i_mid][j + j_mid] = a[i][j].real();
+        output[i + i_mid][j + j_mid] = input[i][j].real();
       } else if (i < i_mid && j > j_mid) {
-        input[i + i_mid][j - j_mid] = a[i][j].real();
+        output[i + i_mid][j - j_mid] = input[i][j].real();
       } else if (i >= i_mid && j <= j_mid) {
-        input[i - i_mid][j + j_mid] = a[i][j].real();
+        output[i - i_mid][j + j_mid] = input[i][j].real();
       } else if (i > i_mid && j > j_mid) {
-        input[i - i_mid][j - j_mid] = a[i][j].real();
+        output[i - i_mid][j - j_mid] = input[i][j].real();
       }
     }
   }

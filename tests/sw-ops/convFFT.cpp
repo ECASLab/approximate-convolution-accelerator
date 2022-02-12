@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
   }
   cv::Mat img = cv::imread(argv[1], 0);
 
+  std::complex<float> b[MRows][NCols] = {0};
   std::complex<float> a[MRows][NCols] = {0};
 
   for (int i{0}; i < MRows; ++i) {
@@ -49,15 +50,17 @@ int main(int argc, char** argv) {
 #error "Cannot proceed with the given kernel"
 #endif
 
+  //Software test
   //ama::hw::fft_conv_2D<float, MRows, NCols, K>(a, c);
 
+  //Hardware test
   ama::hw::convolvers::fft<float, MRows, NCols, K> op{};
-  op.Execute(a, c);
+  op.Execute(a, c, b);
 
   cv::Mat a_img(MRows, NCols, CV_8U, a);
   for (int i{0}; i < MRows; ++i) {
     for (int j{0}; j < NCols; ++j) {
-      a_img.at<uint8_t>(i, j) = a[i][j].real();
+      a_img.at<uint8_t>(i, j) = b[i][j].real();
     }
   }
 
