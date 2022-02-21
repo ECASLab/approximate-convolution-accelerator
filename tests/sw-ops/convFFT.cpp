@@ -50,9 +50,6 @@ int main(int argc, char** argv) {
 #error "Cannot proceed with the given kernel"
 #endif
 
-  //Software test
-  //ama::hw::fft_conv_2D<float, MRows, NCols, K>(a, c);
-
   //Hardware test
   ama::hw::convolvers::fft<float, MRows, NCols, K> op{};
   op.Execute(a, c, b);

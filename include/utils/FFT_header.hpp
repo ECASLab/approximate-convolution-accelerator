@@ -3,7 +3,7 @@
  * Author: Alejandro Rodriguez Figueroa <alejandrorf@estudiantec.cr>
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
-
+#pragma once
 /* FFT template */
 
 template <typename T>

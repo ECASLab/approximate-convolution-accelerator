@@ -4,13 +4,13 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#pragma once
 #include <complex>
 #include <iostream>
 #include <valarray>
 #include "FFT_2D.hpp"
 #include "IFFT_2D.hpp"
 #include "PaddKernel_FFT.hpp"
-#pragma once
 #include "../utils/FFT_header.hpp"
 
 namespace ama {
@@ -49,7 +49,6 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
     }
   }
 
-  //ama::sw::ifft_2D<T, M, N>(input);
   ama::sw::ifft_2D<T, M, N>(a);
 
 //fixes the quadrants of output 

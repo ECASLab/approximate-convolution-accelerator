@@ -3,13 +3,12 @@
  * Author: Alejandro Rodriguez Figueroa <alejandrorf@estudiantec.cr>
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
-
+#pragma once
 #include <complex>
 #include <iostream>
 #include <valarray>
-#pragma once
-#include "Convolver.hpp"
 #include "../utils/FFT_header.hpp"
+#include "Convolver.hpp"
 
 namespace ama {
 namespace hw {
@@ -25,8 +24,11 @@ using namespace ama::hw;
  * @tparam O output window size
  * @tparam ADD add functor
  * @tparam ADD mult functor
+ * @tparam M is the high of the input image
+ * @tparam N is the width of the input image
  */
-template <typename T , int M , int N , int K , int O = 2, class ADD = arithmetic::exact::Add<T>,
+template <typename T, int M, int N, int K, int O = 2,
+          class ADD = arithmetic::exact::Add<T>,
           class MULT = arithmetic::exact::Mult<T>>
 class fft : public Convolver<T, K, O, ADD, MULT> {
  public:
@@ -36,54 +38,56 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  virtual void Execute(Complex<T> input[M][N], const T kernel[K][K], Complex<T> output[M][N]);
+  virtual void Execute(Complex<T> input[M][N], const T kernel[K][K],
+                       Complex<T> output[M][N]);
 
  private:
   /**
- * @brief Matrix fft convolution for array
- * It performs a lineal fft for array of complex numbers.
- * @param x input array
- * @param N size of the array
- */
+   * @brief Matrix fft convolution for array
+   * It performs a lineal fft for array of complex numbers.
+   * @param x input array
+   * @param N size of the array
+   */
   void fft_1D(CArray<T> &x);
-/**
- * @brief Matrix fft convolution for array
- * It performs a lineal fft for array of complex numbers.
- * @param input input matrix
- * @param N number of columns
- * @param M number of rows
- */
+  /**
+   * @brief Matrix fft convolution for array
+   * It performs a lineal fft for array of complex numbers.
+   * @param input input matrix
+   * @param N number of columns
+   * @param M number of rows
+   */
   void fft_2D(Complex<T> input[M][N]);
 
-/**
- * @brief Matrix inverse fft convolution for array
- * It performs a lineal fft for array of complex numbers.
- * @param x input array
- */
+  /**
+   * @brief Matrix inverse fft convolution for array
+   * It performs a lineal fft for array of complex numbers.
+   * @param x input array
+   */
   void ifft(CArray<T> &x);
 
-/**
- * @brief Matrix fft convolution for array
- * It performs a lineal fft for array of complex numbers.
- * @param input input matrix
- * @param N number of columns
- * @param M number of rows
- */
+  /**
+   * @brief Matrix fft convolution for array
+   * It performs a lineal fft for array of complex numbers.
+   * @param input input matrix
+   * @param N number of columns
+   * @param M number of rows
+   */
   void ifft_2D(Complex<T> input[M][N]);
 
-/**
- * @brief Matrix padding
- * It performs the padding on a matrix for a kernel size k.
- * @param input_kernel Matrix original kernel
- * @param output_image kernel with the padding applied
- */
- void paddkernel_FFT(const T input_kernel[K][K], Complex<T> output_image[M][N]);
-
+  /**
+   * @brief Matrix padding
+   * It performs the padding on a matrix for a kernel size k.
+   * @param input_kernel Matrix original kernel
+   * @param output_image kernel with the padding applied
+   */
+  void paddkernel_FFT(const T input_kernel[K][K],
+                      Complex<T> output_image[M][N]);
 };
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
-  Complex<T> input[M][N], const T kernel[K][K], Complex<T> output[M][N]) {
+inline void fft<T, M, N, K, O, ADD, MULT>::Execute(Complex<T> input[M][N],
+                                                   const T kernel[K][K],
+                                                   Complex<T> output[M][N]) {
   fft_2D(input);
 
   Complex<T> b[M][N] = {0};
@@ -95,7 +99,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
   const int i_mid = (M / 2) - 1;
   const int j_mid = (M / 2) - 1;
 
-//Hadamard product 
+  // Hadamard product
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
@@ -104,7 +108,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
   }
   ifft_2D(input);
 
-//fixes the quadrants of output 
+  // fixes the quadrants of output
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
@@ -121,12 +125,11 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(
   }
 }
 
-template <typename C , int M, int P, int K, int O, class ADD, class MULT>
-inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(
-    CArray<C> &x) {
+template <typename C, int M, int P, int K, int O, class ADD, class MULT>
+inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
-  C thetaT = kPI / N;
+  const C thetaT = kPI / N;
   Complex<C> phiT{cos(thetaT), -sin(thetaT)}, T;
   while (k > 1) {
     n = k;
@@ -144,7 +147,7 @@ inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(
     }
   }
   // Decimate
-  auto m = static_cast<unsigned int>(log2(N));
+  const auto m = static_cast<unsigned int>(log2(N));
   for (unsigned int a = 0; a < N; a++) {
     unsigned int b = a;
     // Reverse bits
@@ -162,9 +165,8 @@ inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(
 }
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::fft_2D(
-    Complex<T> input[M][N]) {
-Complex<T> input_arr[M] = {0};
+inline void fft<T, M, N, K, O, ADD, MULT>::fft_2D(Complex<T> input[M][N]) {
+  Complex<T> input_arr[M] = {0};
   // Row FFT
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
@@ -190,8 +192,7 @@ Complex<T> input_arr[M] = {0};
 }
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::ifft(
-    CArray<T> &x) {
+inline void fft<T, M, N, K, O, ADD, MULT>::ifft(CArray<T> &x) {
   // conjugate the complex numbers
   x = x.apply(std::conj);
 
@@ -202,14 +203,11 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft(
   x = x.apply(std::conj);
 
   // scale the numbers
-  // T scale = 1. / x.size();
-  // x *= scale;
   x /= x.size();
 }
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(
-    Complex<T> input[M][N]) {
+inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
   Complex<T> input_arr[M] = {0};
 
   // Columns iFFT
@@ -239,13 +237,12 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
 inline void fft<T, M, N, K, O, ADD, MULT>::paddkernel_FFT(
-  const T input_kernel[K][K], Complex<T> output_image[M][N]) {
+    const T input_kernel[K][K], Complex<T> output_image[M][N]) {
   int start[2] = {0};
   const int offset = (K + 1) / 2;
 
   start[0] = (M / 2) - offset;
   start[1] = (N / 2) - offset;
-
 
   for (int i{0}; i < K; ++i) {
     for (int j{0}; j < K; ++j) {
