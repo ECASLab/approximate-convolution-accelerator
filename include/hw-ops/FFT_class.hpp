@@ -38,8 +38,8 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  virtual void Execute(Complex<T> input[M][N], const T kernel[K][K],
-                       Complex<T> output[M][N]);
+  virtual void Execute(const T input[M][N], const T kernel[K][K],
+                       T output[M][N]);
 
  private:
   /**
@@ -82,13 +82,26 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    */
   void paddkernel_FFT(const T input_kernel[K][K],
                       Complex<T> output_image[M][N]);
+  
+  /**
+   * @brief Matrix padding
+   * It performs the padding on a matrix for a kernel size k.
+   * @param input_kernel Matrix original kernel
+   * @param output_image kernel with the padding applied
+   */
+  void Real_to_complex(const T input_image[M][N],
+                      Complex<T> output_image[M][N]);
 };
 
 template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::Execute(Complex<T> input[M][N],
+inline void fft<T, M, N, K, O, ADD, MULT>::Execute(const T input[M][N],
                                                    const T kernel[K][K],
-                                                   Complex<T> output[M][N]) {
-  fft_2D(input);
+                                                   T output[M][N]) {
+  Complex<T> a[M][N] = {0};
+  Real_to_complex(input,a);
+
+
+  fft_2D(a);
 
   Complex<T> b[M][N] = {0};
 
@@ -103,23 +116,23 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(Complex<T> input[M][N],
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
-      input[i][j] = input[i][j] * b[i][j];
+      a[i][j] = a[i][j] * b[i][j];
     }
   }
-  ifft_2D(input);
+  ifft_2D(a);
 
   // fixes the quadrants of output
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
       if (i <= i_mid && j <= j_mid) {
-        output[i + i_mid][j + j_mid] = input[i][j].real();
+        output[i + i_mid][j + j_mid] = a[i][j].real();
       } else if (i < i_mid && j > j_mid) {
-        output[i + i_mid][j - j_mid] = input[i][j].real();
+        output[i + i_mid][j - j_mid] = a[i][j].real();
       } else if (i >= i_mid && j <= j_mid) {
-        output[i - i_mid][j + j_mid] = input[i][j].real();
+        output[i - i_mid][j + j_mid] = a[i][j].real();
       } else if (i > i_mid && j > j_mid) {
-        output[i - i_mid][j - j_mid] = input[i][j].real();
+        output[i - i_mid][j - j_mid] = a[i][j].real();
       }
     }
   }
@@ -247,6 +260,16 @@ inline void fft<T, M, N, K, O, ADD, MULT>::paddkernel_FFT(
   for (int i{0}; i < K; ++i) {
     for (int j{0}; j < K; ++j) {
       output_image[start[0] + i][start[1] + j] = input_kernel[i][j];
+    }
+  }
+}
+
+template <typename T, int M, int N, int K, int O, class ADD, class MULT>
+inline void fft<T, M, N, K, O, ADD, MULT>::Real_to_complex(
+    const T input_image[M][N],Complex<T> output_image[M][N]) {
+  for (int i{0}; i < M; ++i) {
+    for (int j{0}; j < N; ++j) {
+      output_image[i][j] = input_image[i][j];
     }
   }
 }

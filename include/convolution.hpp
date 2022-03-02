@@ -10,16 +10,16 @@
 #ifndef SW_ONLY
 #include "hw-ops/Convolution.hpp"
 #include "hw-ops/cores/arithmetic-exact.hpp"
+#include "hw-ops/FFT_class.hpp"
 #include "hw-ops/Padding.hpp"
 #include "hw-ops/Space.hpp"
 #include "hw-ops/Winograd.hpp"
-#include "hw-ops/FFT_class.hpp"
 #else
 /* Software ops */
 #include "sw-ops/Convolution.hpp"
+#include "hw-ops/FFT_class.hpp"
 #include "sw-ops/FFT_conv_2D.hpp"
 #include "sw-ops/Padding.hpp"
-#include "hw-ops/FFT_class.hpp"
 #endif
 
 /* Utils */

@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
   }
   cv::Mat img = cv::imread(argv[1], 0);
 
-  std::complex<float> b[MRows][NCols] = {0};
-  std::complex<float> a[MRows][NCols] = {0};
+  float b[MRows][NCols] = {0};
+  float a[MRows][NCols] = {0};
 
   for (int i{0}; i < MRows; ++i) {
     for (int j{0}; j < NCols; ++j) {
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   cv::Mat a_img(MRows, NCols, CV_8U, a);
   for (int i{0}; i < MRows; ++i) {
     for (int j{0}; j < NCols; ++j) {
-      a_img.at<uint8_t>(i, j) = b[i][j].real();
+      a_img.at<uint8_t>(i, j) = b[i][j];
     }
   }
 
