@@ -4,13 +4,12 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#pragma once
 #include <complex>
 #include <iostream>
 #include <valarray>
 #include "FFT.hpp"
 #include "../utils/FFT_header.hpp"
-
-#pragma once
 
 namespace ama {
 namespace sw {
@@ -31,12 +30,11 @@ void ifft(CArray<T> &x) {
   ama::sw::fft<T>(x);
 
   // conjugate the complex numbers again
-  //x = x.apply(std::conj);
-  T scale = 1. / x.size();
-  x *= scale;
+  x = x.apply(std::conj);
 
   // scale the numbers
-  x /= x.size();
+  T scale = 1. / x.size();
+  x *= scale;
 }
 }  // namespace sw
 }  // namespace ama

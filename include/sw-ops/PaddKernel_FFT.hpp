@@ -4,10 +4,8 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
-#include "../utils/FFT_header.hpp"
-
 #pragma once
-
+#include "../utils/FFT_header.hpp"
 
 namespace ama {
 namespace sw {

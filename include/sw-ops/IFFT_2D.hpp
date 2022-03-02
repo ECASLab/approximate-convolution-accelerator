@@ -4,13 +4,12 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#pragma once
 #include <complex>
 #include <iostream>
 #include <valarray>
 #include "IFFT.hpp"
 #include "../utils/FFT_header.hpp"
-
-#pragma once
 
 namespace ama {
 namespace sw {

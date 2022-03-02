@@ -4,6 +4,7 @@
  * Supervisor: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
+#pragma once
 #include <complex>
 #include <iostream>
 #include <valarray>
@@ -11,8 +12,6 @@
 #include "IFFT_2D.hpp"
 #include "PaddKernel_FFT.hpp"
 #include "../utils/FFT_header.hpp"
-
-#pragma once
 
 namespace ama {
 namespace sw {
@@ -46,11 +45,10 @@ void fft_conv_2D(Complex<T> input[M][N], const T kernel[K][K]) {
 
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
-      input[i][j] = input[i][j] * b[i][j];
+      a[i][j] = input[i][j] * b[i][j];
     }
   }
 
-  ama::sw::ifft_2D<T, M, N>(input);
   ama::sw::ifft_2D<T, M, N>(a);
 
 //fixes the quadrants of output 
