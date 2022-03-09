@@ -10,7 +10,7 @@ SYN_TOOL?=vivado_hls
 
 # Define environment variables for the script
 PARAMETERS=$(TEST)_$(Q_KS)_$(Q_BW)_$(Q_O)_$(Q_CONV_CORE)
-PROJECT_NAME=hls_project_$(TEST)_$(PARAMETERS)
+PROJECT_NAME=hls_project_$(PARAMETERS)
 TOP_FUNCTION=$(TEST)_top_accel
 SRC_FILES=$(wildcard tops/$(TEST).cpp) $(wildcard tops/$(TEST).hpp)
 TB_FILE=testbenches/$(TEST)_tb.cpp

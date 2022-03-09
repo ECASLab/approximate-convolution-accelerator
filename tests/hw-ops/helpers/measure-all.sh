@@ -40,11 +40,7 @@ do
       for o in $(seq ${MIN_Q_O} ${STEP_Q_O} ${MAX_Q_O});
       do
         echo "[Measuring all]: Computing ${accel} with BW ${i}, QO ${o} and KS ${ks} in processor ${CID}"
-        if [ "${accel}" == "Winograd" ] && [ "${o}" != "2" ]; then
-          echo "Not fully supported. Skipping"
-        else
-          Q_O=${o} Q_KS=${ks} Q_BW=${i} Q_CONV_CORE=${accel} TEST=single_core CUSTOM_FLAGS=-DOVERRIDE_TH make measure
-        fi
+        Q_O=${o} Q_KS=${ks} Q_BW=${i} Q_CONV_CORE=${accel} TEST=single_core CUSTOM_FLAGS=-DOVERRIDE_TH make measure
       done
     done
   done
