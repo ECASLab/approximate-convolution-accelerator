@@ -42,10 +42,13 @@ cd tests/hw-ops/
 TEST=spatialconv make test
 
 # For synthesis + simulation where the testbench has arguments
-TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" TEST=open make test
+export TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" 
+TEST=open make test
 
 # Run everything - with a Kernel Size of 3x3
-export Q_KS=3
+export MIN_Q_K=3
+export MAX_Q_K=3
+export TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" 
 make measure-all
 
 # Extracts data
@@ -67,6 +70,8 @@ and where the environment variables are:
 * TEST: name of the tests. Please, inspect `tests/hw-ops/tops/*.cpp` for the possible tests. You can also use `make help`.
 * Q_KS: Kernel size (one of the sides). Default: 3
 * Q_BW: Bit length of the integer logarithm representation. Default: 8
+* Q_O: size of the output (in rows/cols). Default: 2
+- Q_CONV_CORE: convolver. Default: Spatial
 * SYN_TOOL: name of the synthesis tool. By default, it is `vivado_hls`
 
 > If something fails and it is related to `vivado_hls not found`, please, make sure of having it in the environment. Usually, it requires:
