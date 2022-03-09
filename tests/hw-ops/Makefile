@@ -41,8 +41,8 @@ measure-all:
 	mpirun bash helpers/measure-all.sh
 
 # Extracts the errors and other useful data
+#bash helpers/extract-errors.sh
 extract-data:
-	bash helpers/extract-errors.sh
 	python3 helpers/extract-report.py
 
 help:
