@@ -148,6 +148,8 @@ int main(int argc, char **argv) {
             << ama::utils::psnr(output_chop_sw, output_chop_hw) << std::endl;
   std::cout << "Image Mean: " << mean_std.first << std::endl;
   std::cout << "Image Std: " << mean_std.second << std::endl;
+  std::cout << "Image SSIM: "
+            << ama::utils::ssim(output_chop_sw, output_chop_hw) << std::endl;
   /* 30% */
   std::cout << "Hist 500 bins 30%: "
             << ama::utils::histogram(abs_difference, 500, 0.30) << std::endl;
