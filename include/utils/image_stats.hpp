@@ -11,7 +11,13 @@
 namespace ama {
 namespace utils {
 
-double mse(const cv::Mat golden, const cv::Mat sample) {
+/**
+ * Mean Square Error for OpenCV Matrices
+ * @param golden golden data
+ * @param sample experimental data
+ * @return the MSE in double
+ */
+double mse(const cv::Mat &golden, const cv::Mat &sample) {
   assert(!golden.empty());
   assert(!sample.empty());
 
@@ -32,6 +38,35 @@ double mse(const cv::Mat golden, const cv::Mat sample) {
   return singleton.at<double>(0, 0) / (golden.rows * golden.cols);
 }
 
+/**
+ * Compute the histogram given a matrix, a maximum and a number of bins
+ * @param input_matrix matrix with the data to count
+ * @param bins number of bins
+ * @param max maximum of the values to count
+ * @return histogram matrix 1-D
+ */
+cv::Mat histogram(const cv::Mat &input_matrix, const int bins, double max) {
+  cv::Mat hist;
+
+  const int channels[] = {0};
+  const int hbins[] = {bins};
+  const float range[] = {0.f, static_cast<float>(max)};
+  const float *hranges[] = {range};
+
+  cv::Mat matrix_float;
+  input_matrix.convertTo(matrix_float, CV_32F);
+
+  cv::calcHist(&matrix_float, 1, {0}, cv::Mat(), hist, 1, hbins, hranges, true,
+               false);
+
+  return hist;
+}
+
+/**
+ * Computes the mean and the standard deviation
+ * @param matrix matrix with the data
+ * @return pair with the mean and the std respectively
+ */
 std::pair<double, double> mean_std(const cv::Mat matrix) {
   assert(!matrix.empty());
 
@@ -47,6 +82,11 @@ std::pair<double, double> mean_std(const cv::Mat matrix) {
                                    std_mat.at<double>(0, 0));
 }
 
+/**
+ * Computes the minimum and the maximum
+ * @param matrix matrix with the data
+ * @return pair with the min and the max respectively
+ */
 std::pair<double, double> min_max(const cv::Mat &matrix) {
   /* Find the max of the golden */
   double min_val, max_val;
@@ -55,6 +95,12 @@ std::pair<double, double> min_max(const cv::Mat &matrix) {
   return std::pair<double, double>{min_val, max_val};
 }
 
+/**
+ * Computes Peak Signal-to-Noise Ratio
+ * @param golden golden data
+ * @param sample experimental data
+ * @return the PSNR in double
+ */
 double psnr(const cv::Mat golden, const cv::Mat sample) {
   assert(!golden.empty());
   assert(!sample.empty());

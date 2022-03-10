@@ -138,16 +138,19 @@ int main(int argc, char **argv) {
   output_sw(roi_out).convertTo(output_chop_sw, CV_64F);
   output_hw(roi_out).convertTo(output_chop_hw, CV_64F);
 
-  cv::Mat abs_difference = cv::abs(output_chop_sw - output_chop_hw);
+  cv::Mat abs_difference = (cv::abs(output_chop_sw - output_chop_hw) / 256.);
   auto mean_std = ama::utils::mean_std(abs_difference);
 
   std::cout << "Image RMSE: "
             << std::sqrt(ama::utils::mse(output_chop_sw, output_chop_hw)) / 256.
             << std::endl;
-  std::cout << "Image PNSR: "
+  std::cout << "Image PSNR: "
             << ama::utils::psnr(output_chop_sw, output_chop_hw) << std::endl;
-  std::cout << "Image Mean: " << mean_std.first / 256. << std::endl;
-  std::cout << "Image Std: " << mean_std.second / 256. << std::endl;
+  std::cout << "Image Mean: " << mean_std.first << std::endl;
+  std::cout << "Image Std: " << mean_std.second << std::endl;
+  /* 30% */
+  std::cout << "Hist 500 bins 30%: "
+            << ama::utils::histogram(abs_difference, 500, 0.30) << std::endl;
 
   /* Extract kernel differences */
   cv::Mat kernel_hw{kernel_sw.size(), kernel_sw.type()};
@@ -159,10 +162,11 @@ int main(int argc, char **argv) {
 
   std::cout << "Kernel RMSE: "
             << std::sqrt(ama::utils::mse(kernel_sw, kernel_hw)) << std::endl;
-  std::cout << "Kernel PNSR: " << ama::utils::psnr(kernel_sw, kernel_hw)
+  std::cout << "Kernel PSNR: " << ama::utils::psnr(kernel_sw, kernel_hw)
             << std::endl;
   std::cout << "Kernel Mean: " << mean_std.first << std::endl;
   std::cout << "Kernel Std: " << mean_std.second << std::endl;
+  std::cout << abs_difference << std::endl;
 
   /* Co-sim patch */
   single_core_top_accel(input_batch, kernel, output_batch);
