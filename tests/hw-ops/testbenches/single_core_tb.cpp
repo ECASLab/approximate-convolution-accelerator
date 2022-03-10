@@ -82,10 +82,12 @@ int main(int argc, char **argv) {
   std::cout << "Kernel: " << std::endl;
   ama::utils::print_matrix<DataType, Q_K, Q_K>(kernel);
 
-  cv::Mat input_img_pad{input_img.rows + 2, input_img.cols + 2,
-                        input_img.type()};
+  /* Create a padded image */
+  const int offset = Q_K / 2;
+  cv::Mat input_img_pad = cv::Mat::zeros(
+      input_img.rows + Q_K - 1, input_img.cols + Q_K - 1, input_img.type());
   cv::Mat roi_input_img_pad =
-      input_img_pad(cv::Rect{1, 1, input_img.cols, input_img.rows});
+      input_img_pad(cv::Rect{offset, offset, input_img.cols, input_img.rows});
   input_img.copyTo(roi_input_img_pad);
 
   output_hw = cv::Mat::zeros(input_img.size(), input_img.type());
@@ -94,10 +96,9 @@ int main(int argc, char **argv) {
   /* Send matrix */
   const int step_x = kOutputSize;
   const int step_y = kOutputSize;
-  const int offset = Q_K / 2;
 
-  for (int i{0}; i < (input_img.rows - Q_K + 2); i += step_y) {
-    for (int j{0}; j < (input_img.cols - Q_K + 2); j += step_x) {
+  for (int i{0}; i < input_img.rows; i += step_y) {
+    for (int j{0}; j < input_img.cols; j += step_x) {
       /* Get the ROI and load the data */
       cv::Rect roi_in{j, i, kWindowSize, kWindowSize};
       CopyMatToArray(input_img_pad, input_batch[0], roi_in);
@@ -114,7 +115,7 @@ int main(int argc, char **argv) {
       }
 
       /* Get results */
-      cv::Rect roi_out{j + offset - 1, i + offset - 1, step_x, step_y};
+      cv::Rect roi_out{j, i, step_x, step_y};
       CopyMatFromArray(output_batch[0], output_hw, roi_out);
     }
   }
@@ -132,24 +133,23 @@ int main(int argc, char **argv) {
   }
 
   /* Extract frame differences and error */
-  cv::Rect roi_out{offset, offset, input_img.cols - Q_K, input_img.rows - Q_K};
+  cv::Mat output_float_sw, output_float_hw;
+  output_sw.convertTo(output_float_sw, CV_64F);
+  output_hw.convertTo(output_float_hw, CV_64F);
 
-  cv::Mat output_chop_sw, output_chop_hw;
-  output_sw(roi_out).convertTo(output_chop_sw, CV_64F);
-  output_hw(roi_out).convertTo(output_chop_hw, CV_64F);
-
-  cv::Mat abs_difference = (cv::abs(output_chop_sw - output_chop_hw) / 256.);
+  cv::Mat abs_difference = (cv::abs(output_float_sw - output_float_hw) / 256.);
   auto mean_std = ama::utils::mean_std(abs_difference);
 
   std::cout << "Image RMSE: "
-            << std::sqrt(ama::utils::mse(output_chop_sw, output_chop_hw)) / 256.
+            << std::sqrt(ama::utils::mse(output_float_sw, output_float_hw)) /
+                   256.
             << std::endl;
   std::cout << "Image PSNR: "
-            << ama::utils::psnr(output_chop_sw, output_chop_hw) << std::endl;
+            << ama::utils::psnr(output_float_sw, output_float_hw) << std::endl;
   std::cout << "Image Mean: " << mean_std.first << std::endl;
   std::cout << "Image Std: " << mean_std.second << std::endl;
   std::cout << "Image SSIM: "
-            << ama::utils::ssim(output_chop_sw, output_chop_hw) << std::endl;
+            << ama::utils::ssim(output_float_sw, output_float_hw) << std::endl;
   /* 30% */
   std::cout << "Hist 500 bins 30%: "
             << ama::utils::histogram(abs_difference, 500, 0.30) << std::endl;
@@ -168,7 +168,6 @@ int main(int argc, char **argv) {
             << std::endl;
   std::cout << "Kernel Mean: " << mean_std.first << std::endl;
   std::cout << "Kernel Std: " << mean_std.second << std::endl;
-  std::cout << abs_difference << std::endl;
 
   /* Co-sim patch */
   single_core_top_accel(input_batch, kernel, output_batch);
