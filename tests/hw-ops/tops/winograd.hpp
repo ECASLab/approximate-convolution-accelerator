@@ -9,9 +9,20 @@
 
 #include "convolution.hpp"
 
+#ifndef Q_BW
 #define Q_BW 8
+#endif
+
+#ifndef Q_KS
 #define Q_K 3
+#else
+#define Q_K Q_KS
+#endif
+
+#ifndef Q_O
 #define Q_O 2
+#endif
+
 using DataType = ap_fixed<Q_BW, 1>;
 
 static const int kOutputSize =

@@ -15,7 +15,7 @@ namespace convolvers {
 using namespace ama::hw;
 
 /**
- * Winograd7 convolution class
+ * Winograd convolution class
  * It specialises the convolver into the exact convolution class.
  * @tparam T datatype to work with.
  * @tparam K kernel side size: fixed to 7
@@ -105,7 +105,7 @@ inline void Winograd<T, 7, O, ADD, MULT>::Execute(
                   [Convolver<T, 7, O, ADD, MULT>::kernelsize],
     T output[Convolver<T, 7, O, ADD, MULT>::outputsize]
             [Convolver<T, 7, O, ADD, MULT>::outputsize]) {
-  static_assert(O == 2, "Winograd7 only supports K = 7 and O = 2");
+  static_assert(O == 2, "Winograd only supports K = 7 and O = 2");
 
   ProcessType w_window[Convolver<T, 7, O, ADD, MULT>::windowsize]
                       [Convolver<T, 7, O, ADD, MULT>::windowsize];
