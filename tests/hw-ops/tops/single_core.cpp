@@ -1,5 +1,5 @@
 /*
- * Copyright 2021
+ * Copyright 2022
  * Author: Luis G. Leon-Vega <lleon95@estudiantec.cr>
  */
 
