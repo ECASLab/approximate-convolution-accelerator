@@ -57,7 +57,7 @@ def write_reports(accels):
     files = {}
     # Create files
     for i in accels:
-        f = open('measurements/{}-report.data'.format(i), 'w')
+        f = open('measurements/processed/{}-report.data'.format(i), 'w')
         files[i] = f
         # First row
         row = ["ksize", "bw", "o", "min_lat", "avg_lat", "max_lat",

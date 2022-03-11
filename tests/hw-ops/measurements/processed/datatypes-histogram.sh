@@ -12,10 +12,14 @@ done
 # Compute the histograms for every accel and image
 IMGS="baboon barbara lenna peppers"
 ACCELS="Winograd Spatial"
+KS="3 5 7"
 for img in ${IMGS};
 do
   for acc in ${ACCELS};
   do
-    gnuplot -e "img='${img}'; accel='${acc}'" plot_hist_datatypes.plt
+    for ks in ${KS};
+    do
+      gnuplot -e "img='${img}'; accel='${acc}'; kernel='${ks}'" plot_hist_datatypes.plt
+    done
   done
 done
