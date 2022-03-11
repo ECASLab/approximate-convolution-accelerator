@@ -77,16 +77,6 @@ and where the environment variables are:
 > If something fails and it is related to `vivado_hls not found`, please, make sure of having it in the environment. Usually, it requires:
 > `source /opt/Xilinx/Vivado/2018.2/settings64.sh`
 
-## Important data
-
-After the extraction, the relevant files are:
-
-```
-test/hw-ops/measurements/
-  |_ *-report.data      -> Report about latency and resources
-  |_ *-maxerrs_*.data   -> Report about the maximum error reported
-```
-
 ## How to add a new hardware testbench
 
 1. Create a directive file: you can simply copy and paste one of the existing in `directives/`. The syntax is: `${TEST}.tcl`.
@@ -95,6 +85,27 @@ test/hw-ops/measurements/
 4. Create a testbench. The testbench file must be named as `${TEST}_tb.cpp`.
 5. Add the test to `helpers/measure-all.sh` to `ACCELS`. For example:
 `ACCELS=${ACCELS:-"spatialconv winograd"}`, where `winograd` is a new test.
+
+## Extracting data and generating plots
+
+The project includes a testbench capable of benchmarking several convolution implementations as a part of the design exploration. To generate the data, run:
+
+```bash
+make measure-all
+make extract-data
+```
+
+## Important data
+
+After the extraction, the relevant files are:
+
+```
+test/hw-ops/measurements/processed
+  |_ plot_hist_datatypes_${ACCEL}_${IMG}_${SIZE}.svg -> Report of the error distribution
+  |_ plot_${METRIC}_${ACCEL}.svg                     -> Report of the error metrics
+  |_ hist_*                                          -> Histogram data
+  |_ stats_*                                         -> Statistics and metrics data
+```
 
 ## Known issues
 
