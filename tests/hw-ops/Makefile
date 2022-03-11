@@ -40,10 +40,14 @@ measure: $(REPORT_FILE) $(SIMULATION_FILE)
 measure-all:
 	mpirun bash helpers/measure-all.sh
 
+clean-data:
+	$(RM) measurements/processed/*.data measurements/processed/*.svg
+
 # Extracts the errors and other useful data
-extract-data:
-	bash helpers/extract-errors.sh
+extract-data: clean-data
+	$(RM) measurements/processed/*.data measurements/processed/*.svg
 	python3 helpers/extract-report.py
+	bash helpers/extract-errors.sh
 
 help:
 	$(info $(HELP_MESSAGE))

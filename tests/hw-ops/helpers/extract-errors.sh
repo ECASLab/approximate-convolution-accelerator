@@ -7,7 +7,6 @@
 cd measurements
 
 PROC_FOLDER=processed
-rm -rf ${PROC_FOLDER}/*.data ${PROC_FOLDER}/*.png ${PROC_FOLDER}/*.svg
 mkdir ${PROC_FOLDER}
 
 for file in $(ls *.log*);
@@ -50,3 +49,4 @@ done
 cd ${PROC_FOLDER}
 bash datatypes-histogram.sh
 bash datatypes-metrics.sh
+bash consumptions.sh
