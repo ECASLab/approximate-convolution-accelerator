@@ -217,7 +217,10 @@
 	<path stroke='rgb(  0, 158, 115)'  d='M425.1,422.4 L425.1,43.8 L434.3,43.8 L434.3,422.4 L425.1,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
 		<polygon fill = 'rgb(  0, 158, 115)' points = '149.9,422.4 159.2,422.4 159.2,398.5 149.9,398.5 '/>
 	</g>
-	<path stroke='rgb(  0, 158, 115)'  d='M149.9,422.4 L149.9,398.6 L159.1,398.6 L159.1,422.4 L149.9,422.4 Z  '/></g>
+	<path stroke='rgb(  0, 158, 115)'  d='M149.9,422.4 L149.9,398.6 L159.1,398.6 L159.1,422.4 L149.9,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '333.4,422.4 342.6,422.4 342.6,209.3 333.4,209.3 '/>
+	</g>
+	<path stroke='rgb(  0, 158, 115)'  d='M333.4,422.4 L333.4,209.4 L342.5,209.4 L342.5,422.4 L333.4,422.4 Z  '/></g>
 	</g>
 	<g id="gnuplot_plot_3" ><title>BRAM</title>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
@@ -254,7 +257,10 @@
 	<path stroke='rgb(230, 159,   0)'  d='M443.4,422.4 L443.4,403.3 L452.6,403.3 L452.6,422.4 L443.4,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
 		<polygon fill = 'rgb(230, 159,   0)' points = '168.2,422.4 177.5,422.4 177.5,421.1 168.2,421.1 '/>
 	</g>
-	<path stroke='rgb(230, 159,   0)'  d='M168.2,422.4 L168.2,421.2 L177.4,421.2 L177.4,422.4 L168.2,422.4 Z  '/></g>
+	<path stroke='rgb(230, 159,   0)'  d='M168.2,422.4 L168.2,421.2 L177.4,421.2 L177.4,422.4 L168.2,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(230, 159,   0)' points = '351.7,422.4 361.0,422.4 361.0,411.4 351.7,411.4 '/>
+	</g>
+	<path stroke='rgb(230, 159,   0)'  d='M351.7,422.4 L351.7,411.5 L360.9,411.5 L360.9,422.4 L351.7,422.4 Z  '/></g>
 	</g>
 	<g id="gnuplot_plot_5" ><title>Avg Latency</title>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
@@ -277,7 +283,10 @@
 	<path stroke='rgb(240, 228,  66)'  d='M452.6,422.4 L452.6,220.2 L461.8,220.2 L461.8,422.4 L452.6,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
 		<polygon fill = 'rgb(240, 228,  66)' points = '177.4,422.4 186.7,422.4 186.7,220.1 177.4,220.1 '/>
 	</g>
-	<path stroke='rgb(240, 228,  66)'  d='M177.4,422.4 L177.4,220.2 L186.6,220.2 L186.6,422.4 L177.4,422.4 Z  '/></g>
+	<path stroke='rgb(240, 228,  66)'  d='M177.4,422.4 L177.4,220.2 L186.6,220.2 L186.6,422.4 L177.4,422.4 Z  '/>	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(240, 228,  66)' points = '360.9,422.4 370.2,422.4 370.2,220.1 360.9,220.1 '/>
+	</g>
+	<path stroke='rgb(240, 228,  66)'  d='M360.9,422.4 L360.9,220.2 L370.1,220.2 L370.1,422.4 L360.9,422.4 Z  '/></g>
 	</g>
 <g fill="none" color="white" stroke="rgb(240, 228,  66)" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter">
 </g>
