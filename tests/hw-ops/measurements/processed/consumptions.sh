@@ -20,6 +20,24 @@ do
   done
 done
 
+for acc in "Spatial";
+do
+  FILE="${acc}-report.data"
+  for o in $(seq 2 2 8);
+  do
+    for ks in ${KS};
+    do
+      awk "{if (\$1 == ${ks} && \$3 == ${o}) print \$0}" ${FILE} > "consumption_${acc}_${ks}_${o}_dtypes.data"
+    done
+  done
+done
+
+for ks in ${KS};
+do
+  gnuplot -e "accel='${acc}';mkernel='${ks}'" plot_datatype_efficiency.plt
+  gnuplot -e "accel='${acc}';mkernel='${ks}'" plot_datatype_performance.plt
+done
+
 # Join the consumptions for output
 DATATYPE=8
 for acc in ${ACCELS};
