@@ -229,7 +229,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
       input_arr[j] = input[j][i];
     }
     CArray<T> data(input_arr, M);
-    ama::sw::ifft<T>(data);
+    ifft(data);
     for (int j{0}; j < M; ++j) {
       input[j][i] = data[j];
     }
@@ -241,7 +241,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
       input_arr[j] = input[i][j];
     }
     CArray<T> data(input_arr, N);
-    ama::sw::ifft<T>(data);
+    ifft(data);
     for (int j{0}; j < N; ++j) {
       input[i][j] = data[j];
     }
