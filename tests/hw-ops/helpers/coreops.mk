@@ -7,5 +7,7 @@
 # For example:
 Q_KS ?= 3
 Q_BW ?= 8
-CUSTOM_FLAGS+=-DQ_KS=$(Q_KS) -DQ_BW=$(Q_BW)
-export CUSTOM_FLAGS Q_KS Q_BW
+Q_O ?= 2
+Q_CONV_CORE ?= Spatial
+CUSTOM_FLAGS+=-DQ_KS=$(Q_KS) -DQ_K=$(Q_KS) -DQ_BW=$(Q_BW) -DQ_O=$(Q_O) -DQ_CONV_CORE=$(Q_CONV_CORE)
+export CUSTOM_FLAGS Q_KS Q_BW Q_O Q_CONV_CORE

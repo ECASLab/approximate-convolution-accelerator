@@ -9,15 +9,16 @@ include helpers/help.mk
 SYN_TOOL?=vivado_hls
 
 # Define environment variables for the script
-PROJECT_NAME=hls_project_$(TEST)_$(Q_KS)_$(Q_BW)
+PARAMETERS=$(TEST)_$(Q_KS)_$(Q_BW)_$(Q_O)_$(Q_CONV_CORE)
+PROJECT_NAME=hls_project_$(PARAMETERS)
 TOP_FUNCTION=$(TEST)_top_accel
 SRC_FILES=$(wildcard tops/$(TEST).cpp) $(wildcard tops/$(TEST).hpp)
 TB_FILE=testbenches/$(TEST)_tb.cpp
 DIRECTIVE_FILE=directives/$(TEST).tcl
 
 # Files for the reports
-REPORT_FILE=measurements/$(TEST)_$(Q_KS)_$(Q_BW).xml
-SIMULATION_FILE=measurements/$(TEST)_$(Q_KS)_$(Q_BW).log
+REPORT_FILE=measurements/$(PARAMETERS).xml
+SIMULATION_FILE=measurements/$(PARAMETERS).log
 
 SYNTHESIS_REPORT=$(PROJECT_NAME)/solution/syn/report/$(TOP_FUNCTION)_csynth.xml
 SIMULATION_LOG=$(PROJECT_NAME)/solution/csim/report/$(TOP_FUNCTION)_csim.log
@@ -39,10 +40,14 @@ measure: $(REPORT_FILE) $(SIMULATION_FILE)
 measure-all:
 	mpirun bash helpers/measure-all.sh
 
+clean-data:
+	$(RM) measurements/processed/*.data measurements/processed/*.svg
+
 # Extracts the errors and other useful data
-extract-data:
-	bash helpers/extract-errors.sh
+extract-data: clean-data
+	$(RM) measurements/processed/*.data measurements/processed/*.svg
 	python3 helpers/extract-report.py
+	bash helpers/extract-errors.sh
 
 help:
 	$(info $(HELP_MESSAGE))
@@ -67,5 +72,5 @@ $(REPORT_FILE): $(SYNTHESIS_REPORT)
 	cp -f $< $@
 
 $(SIMULATION_FILE): $(SIMULATION_LOG)
-	cp -f $< $@
+	cp --backup=numbered $< $@
 

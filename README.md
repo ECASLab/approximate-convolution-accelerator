@@ -42,10 +42,13 @@ cd tests/hw-ops/
 TEST=spatialconv make test
 
 # For synthesis + simulation where the testbench has arguments
-TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" TEST=open make test
+export TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" 
+TEST=open make test
 
 # Run everything - with a Kernel Size of 3x3
-export Q_KS=3
+export MIN_Q_K=3
+export MAX_Q_K=3
+export TB_ARGV="`pwd`/misc/lenna.png `pwd`/misc/output.png" 
 make measure-all
 
 # Extracts data
@@ -67,20 +70,12 @@ and where the environment variables are:
 * TEST: name of the tests. Please, inspect `tests/hw-ops/tops/*.cpp` for the possible tests. You can also use `make help`.
 * Q_KS: Kernel size (one of the sides). Default: 3
 * Q_BW: Bit length of the integer logarithm representation. Default: 8
+* Q_O: size of the output (in rows/cols). Default: 2
+- Q_CONV_CORE: convolver. Default: Spatial
 * SYN_TOOL: name of the synthesis tool. By default, it is `vivado_hls`
 
 > If something fails and it is related to `vivado_hls not found`, please, make sure of having it in the environment. Usually, it requires:
 > `source /opt/Xilinx/Vivado/2018.2/settings64.sh`
-
-## Important data
-
-After the extraction, the relevant files are:
-
-```
-test/hw-ops/measurements/
-  |_ *-report.data      -> Report about latency and resources
-  |_ *-maxerrs_*.data   -> Report about the maximum error reported
-```
 
 ## How to add a new hardware testbench
 
@@ -90,6 +85,27 @@ test/hw-ops/measurements/
 4. Create a testbench. The testbench file must be named as `${TEST}_tb.cpp`.
 5. Add the test to `helpers/measure-all.sh` to `ACCELS`. For example:
 `ACCELS=${ACCELS:-"spatialconv winograd"}`, where `winograd` is a new test.
+
+## Extracting data and generating plots
+
+The project includes a testbench capable of benchmarking several convolution implementations as a part of the design exploration. To generate the data, run:
+
+```bash
+make measure-all
+make extract-data
+```
+
+## Important data
+
+After the extraction, the relevant files are:
+
+```
+test/hw-ops/measurements/processed
+  |_ plot_hist_datatypes_${ACCEL}_${IMG}_${SIZE}.svg -> Report of the error distribution
+  |_ plot_${METRIC}_${ACCEL}.svg                     -> Report of the error metrics
+  |_ hist_*                                          -> Histogram data
+  |_ stats_*                                         -> Statistics and metrics data
+```
 
 ## Known issues
 
