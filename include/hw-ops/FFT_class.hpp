@@ -9,6 +9,7 @@
 #include <valarray>
 #include "../utils/FFT_header.hpp"
 #include "Convolver.hpp"
+#include "cores/arithmetic-exact.hpp"
 
 namespace ama {
 namespace hw {
@@ -27,7 +28,7 @@ using namespace ama::hw;
  * @tparam M is the high of the input image
  * @tparam N is the width of the input image
  */
-template <typename T, int M, int N, int K, int O = 2,
+template <typename T, int K, int O = 2,
           class ADD = arithmetic::exact::Add<T>,
           class MULT = arithmetic::exact::Mult<T>>
 class fft : public Convolver<T, K, O, ADD, MULT> {
@@ -38,8 +39,11 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param kernel kernel to convolve with
    * @param output output window
    */
-  virtual void Execute(const T input[M][N], const T kernel[K][K],
-                       T output[M][N]);
+  virtual void Execute(const T input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize], const T kernel[Convolver<T, K, O, ADD, MULT>::kernelsize]
+                    [Convolver<T, K, O, ADD, MULT>::kernelsize],
+                       T output[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
  private:
   /**
@@ -56,7 +60,8 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param N number of columns
    * @param M number of rows
    */
-  void fft_2D(Complex<T> input[M][N]);
+  void fft_2D(Complex<T> input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * @brief Matrix inverse fft convolution for array
@@ -72,7 +77,8 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param N number of columns
    * @param M number of rows
    */
-  void ifft_2D(Complex<T> input[M][N]);
+  void ifft_2D(Complex<T> input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]);
 
   /**
    * @brief Matrix padding
@@ -80,8 +86,10 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param input_kernel Matrix original kernel
    * @param output_image kernel with the padding applied
    */
-  void paddkernel_FFT(const T input_kernel[K][K],
-                      Complex<T> output_image[M][N]);
+  void paddkernel_FFT(const T input_kernel[Convolver<T, K, O, ADD, MULT>::kernelsize]
+                    [Convolver<T, K, O, ADD, MULT>::kernelsize],
+                      Complex<T> output_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]);
   
   /**
    * @brief Matrix padding
@@ -89,14 +97,21 @@ class fft : public Convolver<T, K, O, ADD, MULT> {
    * @param input_kernel Matrix original kernel
    * @param output_image kernel with the padding applied
    */
-  void Real_to_complex(const T input_image[M][N],
-                      Complex<T> output_image[M][N]);
+  void Real_to_complex(const T input_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize],
+                      Complex<T> output_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]);
 };
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::Execute(const T input[M][N],
-                                                   const T kernel[K][K],
-                                                   T output[M][N]) {
+template <typename T, int K, int O, class ADD, class MULT>
+inline void fft<T, M, N, K, O, ADD, MULT>::Execute(const T input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize],
+                                                   const T kernel[Convolver<T, K, O, ADD, MULT>::kernelsize]
+                    [Convolver<T, K, O, ADD, MULT>::kernelsize],
+                                                   T output[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+  M = Convolver<T, K, O, ADD, MULT>::windowsize;
+  N = Convolver<T, K, O, ADD, MULT>::windowsize;
   Complex<T> a[M][N] = {0};
   Real_to_complex(input,a);
 
@@ -138,7 +153,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::Execute(const T input[M][N],
   }
 }
 
-template <typename C, int M, int P, int K, int O, class ADD, class MULT>
+template <typename C, int K, int O, class ADD, class MULT>
 inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
@@ -177,8 +192,11 @@ inline void fft<C, M, P, K, O, ADD, MULT>::fft_1D(CArray<C> &x) {
   }
 }
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::fft_2D(Complex<T> input[M][N]) {
+template <typename T, int K, int O, class ADD, class MULT>
+inline void fft<T, M, N, K, O, ADD, MULT>::fft_2D(Complex<T> input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+  M = Convolver<T, K, O, ADD, MULT>::windowsize;
+  N = Convolver<T, K, O, ADD, MULT>::windowsize;  
   Complex<T> input_arr[M] = {0};
   // Row FFT
   for (int i{0}; i < M; ++i) {
@@ -204,7 +222,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::fft_2D(Complex<T> input[M][N]) {
   }
 }
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
+template <typename T, int K, int O, class ADD, class MULT>
 inline void fft<T, M, N, K, O, ADD, MULT>::ifft(CArray<T> &x) {
   // conjugate the complex numbers
   x = x.apply(std::conj);
@@ -219,8 +237,11 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft(CArray<T> &x) {
   x /= x.size();
 }
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
-inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
+template <typename T, int K, int O, class ADD, class MULT>
+inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+  M = Convolver<T, K, O, ADD, MULT>::windowsize;
+  N = Convolver<T, K, O, ADD, MULT>::windowsize;  
   Complex<T> input_arr[M] = {0};
 
   // Columns iFFT
@@ -229,7 +250,7 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
       input_arr[j] = input[j][i];
     }
     CArray<T> data(input_arr, M);
-    ifft(data);
+    ama::sw::ifft<T>(data);
     for (int j{0}; j < M; ++j) {
       input[j][i] = data[j];
     }
@@ -241,16 +262,20 @@ inline void fft<T, M, N, K, O, ADD, MULT>::ifft_2D(Complex<T> input[M][N]) {
       input_arr[j] = input[i][j];
     }
     CArray<T> data(input_arr, N);
-    ifft(data);
+    ama::sw::ifft<T>(data);
     for (int j{0}; j < N; ++j) {
       input[i][j] = data[j];
     }
   }
 }
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
+template <typename T, int K, int O, class ADD, class MULT>
 inline void fft<T, M, N, K, O, ADD, MULT>::paddkernel_FFT(
-    const T input_kernel[K][K], Complex<T> output_image[M][N]) {
+    const T input_kernel[Convolver<T, K, O, ADD, MULT>::kernelsize]
+                    [Convolver<T, K, O, ADD, MULT>::kernelsize], Complex<T> output_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+  M = Convolver<T, K, O, ADD, MULT>::windowsize;
+  N = Convolver<T, K, O, ADD, MULT>::windowsize;  
   int start[2] = {0};
   const int offset = (K + 1) / 2;
 
@@ -264,9 +289,13 @@ inline void fft<T, M, N, K, O, ADD, MULT>::paddkernel_FFT(
   }
 }
 
-template <typename T, int M, int N, int K, int O, class ADD, class MULT>
+template <typename T, int K, int O, class ADD, class MULT>
 inline void fft<T, M, N, K, O, ADD, MULT>::Real_to_complex(
-    const T input_image[M][N],Complex<T> output_image[M][N]) {
+    const T input_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize],Complex<T> output_image[Convolver<T, K, O, ADD, MULT>::windowsize]
+                    [Convolver<T, K, O, ADD, MULT>::windowsize]) {
+  M = Convolver<T, K, O, ADD, MULT>::windowsize;
+  N = Convolver<T, K, O, ADD, MULT>::windowsize;  
   for (int i{0}; i < M; ++i) {
     for (int j{0}; j < N; ++j) {
       output_image[i][j] = input_image[i][j];
