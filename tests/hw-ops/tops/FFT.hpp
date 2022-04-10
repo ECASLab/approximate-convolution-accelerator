@@ -21,7 +21,7 @@
 #endif
 
 #ifndef Q_O
-#define Q_O 2
+#define Q_O 5
 #endif
 
 using DataType = ap_fixed<Q_BW, 1>;
@@ -32,10 +32,9 @@ static const int kWindowSize =
     ama::hw::convolvers::Spatial<DataType, Q_K, Q_O>::windowsize;
 static const int kKernelSize =
     ama::hw::convolvers::Spatial<DataType, Q_K, Q_O>::kernelsize;
-static const int kRowsWindow = kOutputSize + kKernelSize - 1;
-static const int kRowsOutput = kOutputSize;
+static const int kRowsWindow = kWindowSize;
 
 
-void FFT_top_accel(DataType input[kRowsWindow][kWindowSize],
+void FFT_top_accel(DataType input[kRowsWindow][kRowsWindow],
                         DataType kernel[kKernelSize][kKernelSize],
-                        DataType output[kRowsOutput][kOutputSize]);
+                        DataType output[kRowsWindow][kRowsWindow]);

@@ -8,9 +8,9 @@
 
 #include "hw-ops/FFT_class.hpp"
 
-void FFT_top_accel(DataType input[kRowsWindow][kWindowSize],
+void FFT_top_accel(DataType input[kRowsWindow][kRowsWindow],
                    DataType kernel[kKernelSize][kKernelSize],
-                   DataType output[kRowsOutput][kOutputSize]) {
+                   DataType output[kRowsWindow][kRowsWindow]) {
   ama::hw::convolvers::fft<DataType, Q_K, Q_O> op;
   op.Execute(input, kernel, output);
 }
