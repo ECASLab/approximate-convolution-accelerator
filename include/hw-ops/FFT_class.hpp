@@ -159,7 +159,7 @@ inline void fft<C, K, O, ADD, MULT>::fft_1D(CArray<C> &x) {
   // DFT
   unsigned int N = x.size(), k = N, n;
   const C thetaT = kPI / N;
-  Complex<C> phiT{hls::cos(thetaT), -hls::sin(thetaT)}, T;
+  Complex<C> phiT{hls::cosf(thetaT), -hls::sinf(thetaT)}, T;
   while (k > 1) {
     n = k;
     k >>= 1;
@@ -226,6 +226,7 @@ inline void fft<T, K, O, ADD, MULT>::fft_2D(Complex<T> input[Convolver<T, K, O, 
 template <typename T, int K, int O, class ADD, class MULT>
 inline void fft<T, K, O, ADD, MULT>::ifft(CArray<T> &x) {
   // conjugate the complex numbers
+  int M = Convolver<T, K, O, ADD, MULT>::windowsize;
   x = x.apply(std::conj);
 
   // forward fft
@@ -235,7 +236,18 @@ inline void fft<T, K, O, ADD, MULT>::ifft(CArray<T> &x) {
   x = x.apply(std::conj);
 
   // scale the numbers
-  x = x/x.size();
+  //x = x/x.std::size();
+  Complex<T> N;
+  N = 1/x.size();
+  x = x * N;
+  //Complex<T> applidiv = Convolver<T, K, O, ADD, MULT>::windowsize;
+  // Complex<T> applidiv[M];
+  // for (int j{0}; j < M; ++j) {
+  //   applidiv[j] = x[j];
+  //   //applidiv[j] = applidiv[j]/M;
+  //   //x[j] = applidiv[j];
+  //   applidiv[j].imag = x[j].imag / M;
+  // }
 }
 
 template <typename T, int K, int O, class ADD, class MULT>
